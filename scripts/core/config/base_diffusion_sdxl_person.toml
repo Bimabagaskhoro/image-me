@@ -27,7 +27,7 @@ no_half_vae = true
 output_dir = "test_sdxl_sd3"
 output_name = "last"
 pretrained_model_name_or_path = ""
-prior_loss_weight = 0.7
+prior_loss_weight = 0.8
 resolution = "1024,1024"
 sample_prompts = ""
 sample_sampler = "euler_a"
@@ -59,8 +59,8 @@ text_encoder_lr = 1
 lr_scheduler = "constant"
 
 ###### noise offset ######
-# noise_offset_type = "Original"
-# noise_offset = 0.0357
+noise_offset_type = "Original"
+noise_offset = 0.1
 # noise_offset_type = "Multires"
 # multires_noise_iterations = 6
 # multires_noise_discount = 0.3
@@ -74,6 +74,6 @@ network_dropout = 0
 caption_dropout_rate = 0
 clip_skip = 1
 max_timestep = 1000
-min_snr_gamma = 5
+min_snr_gamma = 6
 scale_weight_norms = 5
 seed = 2951032222

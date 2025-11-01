@@ -1,17 +1,17 @@
 # Unique task identifier
-TASK_ID="9a877904-5fe9-402a-8c75-be5eb1b51f7e"
+TASK_ID="9a877904-5fe9-402a-1234-be5eb1b51f7e"
 
 # Base model to fine-tune (from HuggingFace)
-MODEL="zenless-lab/sdxl-anima-pencil-xl-v5"
+MODEL="mhnakif/fluxunchained-dev"
 
 # Dataset ZIP file location (must be a ZIP file with images)
-DATASET_ZIP="s3://your-bucket/path/to/image_dataset.zip"
+DATASET_ZIP="https://gradients.s3.eu-north-1.amazonaws.com/562149dcffb6b9a7_test_data.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVVZOOA7SA4UOFLPI%2F20251029%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20251029T234639Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ce120fe964b74b3bb04c2ceae227086298538cd9d546dc7cd206d93068e8afc4"
 
 # Model type: "sdxl" or "flux"
-MODEL_TYPE="sdxl"
+MODEL_TYPE="flux"
 
 # Optional: Repository name for the trained model
-EXPECTED_REPO_NAME="my-sdxl-finetuned"
+EXPECTED_REPO_NAME="9a877904-5fe9-402a-1234-be5eb1b51f7e"
 
 # For uploading the outputs
 HUGGINGFACE_TOKEN="Your Huggingface Token"

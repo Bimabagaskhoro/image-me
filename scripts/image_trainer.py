@@ -23,6 +23,7 @@ import trainer.utils.training_paths as train_paths
 from core.config.config_handler import save_config_toml
 from core.dataset.prepare_diffusion_dataset import prepare_dataset
 from core.models.utility_models import ImageModelType
+from core.blora_helper import BLoRAConfig, TrainingType, analyze_training_requirements
 
 
 def get_model_path(path: str) -> str:
@@ -152,9 +153,20 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
         else:
             network_config = config_mapping[network_config_person[model_name]]
 
-        config["network_dim"] = network_config["network_dim"]
-        config["network_alpha"] = network_config["network_alpha"]
-        config["network_args"] = network_config["network_args"]
+        # Get base network dimensions
+        base_network_dim = network_config["network_dim"]
+        base_network_alpha = network_config["network_alpha"]
+        
+        # Apply B-LoRA optimization for better style/content separation
+        training_type = TrainingType.STYLE if is_style else TrainingType.PERSON
+        blora_config = BLoRAConfig.get_config(training_type, base_network_dim, base_network_alpha)
+        
+        # Use B-LoRA optimized settings
+        config["network_dim"] = blora_config["network_dim"]
+        config["network_alpha"] = blora_config["network_alpha"]
+        config["network_args"] = blora_config["network_args"]
+        
+        print(f"🎨 B-LoRA Config Applied: {blora_config['description']}", flush=True)
 
     # Save config to file
     config_path = os.path.join(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, f"{task_id}.toml")

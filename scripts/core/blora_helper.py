@@ -127,20 +127,32 @@ class BLoRAConfig:
     ) -> List[int]:
         """
         Generate block-specific dimensions for SDXL
-        SDXL UNet has 12 blocks: 3 down, 3 mid, 6 up
+        SDXL UNet in sd-scripts has 23 blocks total:
+        - IN blocks: 2
+        - DOWN blocks: 9 (3 groups of 3)
+        - MID block: 1
+        - UP blocks: 9 (3 groups of 3)
+        - OUT blocks: 2
         """
         dims = []
         
-        # DOWN blocks (0-2): Structure/Semantics
-        for _ in range(3):
+        # IN blocks (0-1): Initial processing
+        for _ in range(2):
             dims.append(int(base_dim * down_multiplier))
         
-        # MID blocks (3-5): Relationships
-        for _ in range(3):
-            dims.append(int(base_dim * mid_multiplier))
+        # DOWN blocks (2-10): Structure/Semantics - 9 blocks
+        for _ in range(9):
+            dims.append(int(base_dim * down_multiplier))
         
-        # UP blocks (6-11): Texture/Details
-        for _ in range(6):
+        # MID block (11): Bottleneck - 1 block
+        dims.append(int(base_dim * mid_multiplier))
+        
+        # UP blocks (12-20): Texture/Details - 9 blocks
+        for _ in range(9):
+            dims.append(int(base_dim * up_multiplier))
+        
+        # OUT blocks (21-22): Final processing
+        for _ in range(2):
             dims.append(int(base_dim * up_multiplier))
         
         return dims
@@ -152,17 +164,26 @@ class BLoRAConfig:
         mid_multiplier: float,
         up_multiplier: float
     ) -> List[int]:
-        """Generate block-specific alphas matching dims structure"""
+        """Generate block-specific alphas matching dims structure (23 blocks)"""
         alphas = []
         
-        # Match alpha to dim for each block
-        for _ in range(3):
+        # IN blocks (2)
+        for _ in range(2):
             alphas.append(int(base_alpha * down_multiplier))
         
-        for _ in range(3):
-            alphas.append(int(base_alpha * mid_multiplier))
+        # DOWN blocks (9)
+        for _ in range(9):
+            alphas.append(int(base_alpha * down_multiplier))
         
-        for _ in range(6):
+        # MID block (1)
+        alphas.append(int(base_alpha * mid_multiplier))
+        
+        # UP blocks (9)
+        for _ in range(9):
+            alphas.append(int(base_alpha * up_multiplier))
+        
+        # OUT blocks (2)
+        for _ in range(2):
             alphas.append(int(base_alpha * up_multiplier))
         
         return alphas

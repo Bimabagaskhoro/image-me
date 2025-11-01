@@ -63,12 +63,7 @@ class BLoRAConfig:
                 f"conv_dim={max(4, network_dim // 8)}",
                 f"conv_alpha={max(4, network_alpha // 8)}",
                 f"block_dims={','.join(map(str, block_dims))}",
-                f"block_alphas={','.join(map(str, block_alphas))}",
-                "train_unet=True",
-                "train_text_encoder=True",  # CRITICAL for person identity
-                "down_lr_weight=1.2",  # Higher learning for structure
-                "mid_lr_weight=1.1",
-                "up_lr_weight=0.9"
+                f"block_alphas={','.join(map(str, block_alphas))}"
             ],
             "description": "Person/Identity: Focus on structure and semantic understanding"
         }
@@ -103,12 +98,7 @@ class BLoRAConfig:
                 f"conv_dim={max(4, network_dim // 6)}",  # More conv for spatial features
                 f"conv_alpha={max(4, network_alpha // 6)}",
                 f"block_dims={','.join(map(str, block_dims))}",
-                f"block_alphas={','.join(map(str, block_alphas))}",
-                "train_unet=True",
-                "train_text_encoder=False",  # Style doesn't need text encoder updates
-                "down_lr_weight=0.8",
-                "mid_lr_weight=1.0",
-                "up_lr_weight=1.3"  # Higher learning for style blocks
+                f"block_alphas={','.join(map(str, block_alphas))}"
             ],
             "description": "Style/Artistic: Focus on visual appearance and texture"
         }
@@ -123,9 +113,7 @@ class BLoRAConfig:
             "network_alpha": network_alpha,
             "network_args": [
                 f"conv_dim={max(4, network_dim // 8)}",
-                f"conv_alpha={max(4, network_alpha // 8)}",
-                "train_unet=True",
-                "train_text_encoder=True"
+                f"conv_alpha={max(4, network_alpha // 8)}"
             ],
             "description": "General: Balanced training across all blocks"
         }

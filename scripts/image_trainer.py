@@ -166,7 +166,7 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
         config["network_alpha"] = blora_config["network_alpha"]
         config["network_args"] = blora_config["network_args"]
         
-        print(f"🎨 B-LoRA Config Applied: {blora_config['description']}", flush=True)
+        print(f"B-LoRA Config Applied: {blora_config['description']}", flush=True)
 
     # Save config to file
     config_path = os.path.join(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, f"{task_id}.toml")

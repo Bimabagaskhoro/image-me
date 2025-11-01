@@ -27,10 +27,10 @@ mkdir -p "$OUTPUTS_DIR"
 chmod 700 "$OUTPUTS_DIR"
 
 # Build the downloader image
-docker build --no-cache -t trainer-downloader -f dockerfiles/trainer-downloader.dockerfile .
+# docker build --no-cache -t trainer-downloader -f dockerfiles/trainer-downloader.dockerfile .
 
 # Build the trainer image
-docker build --no-cache -t standalone-image-trainer -f dockerfiles/standalone-image-trainer.dockerfile .
+# docker build --no-cache -t standalone-image-trainer -f dockerfiles/standalone-image-trainer.dockerfile .
 
 # Build the hf uploader image
 # docker build --no-cache -t hf-uploader -f dockerfiles/hf-uploader.dockerfile .
@@ -66,3 +66,14 @@ docker run --rm --gpus all \
   --expected-repo-name "$EXPECTED_REPO_NAME" \
   --hours-to-complete 1
 
+echo "Uploading model to HuggingFace..."
+docker run --rm --gpus all \
+  --volume "$OUTPUTS_DIR:/app/checkpoints/:rw" \
+  --env HUGGINGFACE_TOKEN="$HUGGINGFACE_TOKEN" \
+  --env HUGGINGFACE_USERNAME="$HUGGINGFACE_USERNAME" \
+  --env TASK_ID="$TASK_ID" \
+  --env EXPECTED_REPO_NAME="$EXPECTED_REPO_NAME" \
+  --env LOCAL_FOLDER="$LOCAL_FOLDER" \
+  --env HF_REPO_SUBFOLDER="checkpoints" \
+  --name hf-uploader \
+  hf-uploader

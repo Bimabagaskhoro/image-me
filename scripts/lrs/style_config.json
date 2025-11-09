@@ -2,67 +2,144 @@
     "0_30_images": {
         "unet_lr": 0.00002,
         "text_encoder_lr": 0.000002,
-        "train_batch_size": 8,
-        "max_data_loader_n_workers": 4
+        "train_batch_size": 12,
+        "max_data_loader_n_workers": 4,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 1.314,
+        "optimizer_args": [
+            "weight_decay=3e-02",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     },
     "31_60_images": {
         "unet_lr": 0.00002,
         "text_encoder_lr": 0.000002,
         "train_batch_size": 12,
-        "max_data_loader_n_workers": 6
+        "max_data_loader_n_workers": 6,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 1.314,
+        "optimizer_args": [
+            "weight_decay=3e-02",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     },
     "61_90_images": {
         "unet_lr": 0.00003,
         "text_encoder_lr": 0.000003,
-        "train_batch_size": 16,
-        "max_data_loader_n_workers": 8
+        "train_batch_size": 12,
+        "max_data_loader_n_workers": 8,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 1.314,
+        "optimizer_args": [
+            "weight_decay=3e-03",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     },
     "91_120_images": {
         "unet_lr": 0.00008,
         "text_encoder_lr": 0.000008,
-        "train_batch_size": 20,
-        "max_data_loader_n_workers": 10
+        "train_batch_size": 10,
+        "max_data_loader_n_workers": 10,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 0.8,
+        "optimizer_args": [
+            "weight_decay=3e-03",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     },
     "121_150_images": {
         "unet_lr": 0.00007,
         "text_encoder_lr": 0.000007,
-        "train_batch_size": 24,
-        "max_data_loader_n_workers": 10
+        "train_batch_size": 10,
+        "max_data_loader_n_workers": 10,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 0.8,
+        "optimizer_args": [
+            "weight_decay=3e-03",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     },
     "151_180_images": {
         "unet_lr": 0.00007,
         "text_encoder_lr": 0.000007,
-        "train_batch_size": 28,
-        "max_data_loader_n_workers": 12
+        "train_batch_size": 10,
+        "max_data_loader_n_workers": 12,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 0.612,
+        "optimizer_args": [
+            "weight_decay=4e-04",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     },
     "181_210_images": {
         "unet_lr": 0.00006,
         "text_encoder_lr": 0.000006,
-        "train_batch_size": 30,
-        "max_data_loader_n_workers": 12
+        "train_batch_size": 8,
+        "max_data_loader_n_workers": 12,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 0.612,
+        "optimizer_args": [
+            "weight_decay=4e-04",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     },
     "211_240_images": {
         "unet_lr": 0.00006,
         "text_encoder_lr": 0.000006,
-        "train_batch_size": 30,
-        "max_data_loader_n_workers": 14
+        "train_batch_size": 8,
+        "max_data_loader_n_workers": 14,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 0.612,
+        "optimizer_args": [
+            "weight_decay=4e-04",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     },
     "241_270_images": {
         "unet_lr": 0.00005,
         "text_encoder_lr": 0.000005,
-        "train_batch_size": 30,
-        "max_data_loader_n_workers": 14
+        "train_batch_size": 8,
+        "max_data_loader_n_workers": 14,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 0.6,
+        "optimizer_args": [
+            "weight_decay=3e-04",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     },
     "271_300_images": {
         "unet_lr": 0.00005,
         "text_encoder_lr": 0.000005,
-        "train_batch_size": 30,
-        "max_data_loader_n_workers": 16
+        "train_batch_size": 7,
+        "max_data_loader_n_workers": 16,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 0.6,
+        "optimizer_args": [
+            "weight_decay=3e-04",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     },
     "301_1000_images": {
         "unet_lr": 0.00005,
         "text_encoder_lr": 0.000005,
-        "train_batch_size": 30,
-        "max_data_loader_n_workers": 16
+        "train_batch_size": 7,
+        "max_data_loader_n_workers": 16,
+        "max_grad_norm": 1.314,
+        "prior_loss_weight": 0.6,
+        "optimizer_args": [
+            "weight_decay=3e-04",
+            "betas=(0.9, 0.999)",
+            "eps=1e-08"
+        ]
     }
 }

@@ -210,7 +210,12 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             print(f"  - Base unet_lr: {base_unet_lr} × reg_ratio: {reg_ratio} = {final_unet_lr}", flush=True)
             print(f"  - Base text_encoder_lr: {base_text_encoder_lr} × reg_ratio: {reg_ratio} = {final_text_encoder_lr}", flush=True)
             print(f"  - train_batch_size: {lrs_settings.get('train_batch_size')}", flush=True)
-            print(f"  - max_data_loader_n_workers: {lrs_settings.get('max_data_loader_n_workers')}", flush=True)
+            # print(f"  - max_data_loader_n_workers: {lrs_settings.get('max_data_loader_n_workers')}", flush=True)
+            print(f"  - prior_loss_weight: {lrs_settings.get('prior_loss_weight')}", flush=True)
+            print(f"  - optimizer_args: {lrs_settings.get('optimizer_args')}", flush=True)
+            print(f"  - min_snr_gamma: {lrs_settings.get('min_snr_gamma')}", flush=True)
+            print(f"  - prior_loss_weight: {lrs_settings.get('prior_loss_weight')}", flush=True)
+            print(f"  - network_alpha: {lrs_settings.get('network_alpha')}", flush=True)
             
             # Apply LRS settings to config with reg_ratio applied to learning rates
             if final_unet_lr is not None:
@@ -219,8 +224,18 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
                 config['text_encoder_lr'] = final_text_encoder_lr
             if 'train_batch_size' in lrs_settings:
                 config['train_batch_size'] = lrs_settings['train_batch_size']
-            if 'max_data_loader_n_workers' in lrs_settings:
-                config['max_data_loader_n_workers'] = lrs_settings['max_data_loader_n_workers']
+            # if 'max_data_loader_n_workers' in lrs_settings:
+            #     config['max_data_loader_n_workers'] = lrs_settings['max_data_loader_n_workers']
+            if 'optimizer_args' in lrs_settings:
+                config['optimizer_args'] = lrs_settings['optimizer_args']
+            if 'min_snr_gamma' in lrs_settings:
+                config['min_snr_gamma'] = lrs_settings['min_snr_gamma']
+            if 'prior_loss_weight' in lrs_settings:
+                config['prior_loss_weight'] = lrs_settings['prior_loss_weight']
+            if 'max_grad_norm' in lrs_settings:
+                config['max_grad_norm'] = lrs_settings['max_grad_norm']        
+            if 'network_alpha' in lrs_settings:
+                config['network_alpha'] = lrs_settings['network_alpha']
         else:
             print(f"Warning: No LRS configuration found for {total_images} total images", flush=True)
     else:

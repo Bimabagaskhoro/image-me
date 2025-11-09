@@ -1,67 +1,67 @@
 {
     "0_30_images": {
         "unet_lr": 0.0003,
-        "text_encoder_lr": 0.000015,
+        "text_encoder_lr": [0.00003, 0.00003],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 4
     },
     "31_60_images": {
         "unet_lr": 0.00025,
-        "text_encoder_lr": 0.0000125,
+        "text_encoder_lr": [0.000025, 0.000025],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 6
     },
     "61_90_images": {
         "unet_lr": 0.0002,
-        "text_encoder_lr": 0.00001,
+        "text_encoder_lr": [0.00002, 0.00002],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 8
     },
     "91_120_images": {
         "unet_lr": 0.00018,
-        "text_encoder_lr": 0.000009,
+        "text_encoder_lr": [0.000018, 0.000018],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 10
     },
     "121_150_images": {
         "unet_lr": 0.00015,
-        "text_encoder_lr": 0.0000075,
+        "text_encoder_lr": [0.000015, 0.000015],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 10
     },
     "151_180_images": {
         "unet_lr": 0.00015,
-        "text_encoder_lr": 0.0000075,
+        "text_encoder_lr": [0.000015, 0.000015],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 12
     },
     "181_210_images": {
         "unet_lr": 0.00012,
-        "text_encoder_lr": 0.000006,
+        "text_encoder_lr": [0.000012, 0.000012],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 12
     },
     "211_240_images": {
         "unet_lr": 0.00012,
-        "text_encoder_lr": 0.000006,
+        "text_encoder_lr": [0.000012, 0.000012],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 14
     },
     "241_270_images": {
         "unet_lr": 0.0001,
-        "text_encoder_lr": 0.000005,
+        "text_encoder_lr": [0.00001, 0.00001],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 14
     },
     "271_300_images": {
         "unet_lr": 0.0001,
-        "text_encoder_lr": 0.000005,
+        "text_encoder_lr": [0.00001, 0.00001],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 16
     },
     "301_1000_images": {
         "unet_lr": 0.0001,
-        "text_encoder_lr": 0.000005,
+        "text_encoder_lr": [0.00001, 0.00001],
         "train_batch_size": 4,
         "max_data_loader_n_workers": 16
     }

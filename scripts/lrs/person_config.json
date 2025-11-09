@@ -1,68 +1,167 @@
 {
     "0_30_images": {
-        "unet_lr": 1,
-        "text_encoder_lr": 11,
-        "train_batch_size": 6,
-        "max_data_loader_n_workers": 4
+        "unet_lr": 1.2,
+        "text_encoder_lr": 1.2,
+        "train_batch_size": 5,
+        "max_data_loader_n_workers": 4,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.01",
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 8,
+        "prior_loss_weight": 1.0
     },
     "31_60_images": {
-        "unet_lr": 0.9,
-        "text_encoder_lr": 0.9,
-        "train_batch_size": 10,
-        "max_data_loader_n_workers": 6
+        "unet_lr": 1.2,
+        "text_encoder_lr": 1.2,
+        "train_batch_size": 5,
+        "max_data_loader_n_workers": 6,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.01",
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 8,
+        "prior_loss_weight": 0.9
     },
     "61_90_images": {
-        "unet_lr": 0.08,
-        "text_encoder_lr": 0.08,
-        "train_batch_size": 14,
-        "max_data_loader_n_workers": 8
+        "unet_lr": 1,
+        "text_encoder_lr": 1,
+        "train_batch_size": 5,
+        "max_data_loader_n_workers": 8,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.01",
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 7,
+        "prior_loss_weight": 0.9
     },
     "91_120_images": {
-        "unet_lr": 0.07,
-        "text_encoder_lr": 0.07,
-        "train_batch_size": 18,
-        "max_data_loader_n_workers": 10
+        "unet_lr": 1,
+        "text_encoder_lr": 1,
+        "train_batch_size": 5,
+        "max_data_loader_n_workers": 10,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.005", 
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 7,
+        "prior_loss_weight": 0.8
     },
     "121_150_images": {
-        "unet_lr": 0.07,
-        "text_encoder_lr": 0.07,
-        "train_batch_size": 22,
-        "max_data_loader_n_workers": 10
+        "unet_lr": 1,
+        "text_encoder_lr": 1,
+        "train_batch_size": 4,
+        "max_data_loader_n_workers": 10,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.005", 
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 6,
+        "prior_loss_weight": 0.8
     },
     "151_180_images": {
-        "unet_lr": 0.06,
-        "text_encoder_lr": 0.06,
-        "train_batch_size": 26,
-        "max_data_loader_n_workers": 12
+        "unet_lr": 0.8,
+        "text_encoder_lr": 0.8,
+        "train_batch_size": 4,
+        "max_data_loader_n_workers": 12,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.005", 
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 6,
+        "prior_loss_weight": 0.7
     },
     "181_210_images": {
-        "unet_lr": 0.06,
-        "text_encoder_lr": 0.06,
-        "train_batch_size": 28,
-        "max_data_loader_n_workers": 12
+        "unet_lr": 0.8,
+        "text_encoder_lr": 0.8,
+        "train_batch_size": 4,
+        "max_data_loader_n_workers": 12,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.008", 
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 5,
+        "prior_loss_weight": 0.7
     },
     "211_240_images": {
-        "unet_lr": 0.05,
-        "text_encoder_lr": 0.05,
-        "train_batch_size": 30,
-        "max_data_loader_n_workers": 14
+        "unet_lr": 0.9,
+        "text_encoder_lr": 0.9,
+        "train_batch_size": 4,
+        "max_data_loader_n_workers": 14,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.008", 
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 5,
+        "prior_loss_weight": 0.7
     },
     "241_270_images": {
-        "unet_lr": 0.05,
-        "text_encoder_lr": 0.05,
-        "train_batch_size": 30,
-        "max_data_loader_n_workers": 14
+        "unet_lr": 0.9,
+        "text_encoder_lr": 0.9,
+        "train_batch_size": 4,
+        "max_data_loader_n_workers": 14,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.008", 
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 5,
+        "prior_loss_weight": 0.7
     },
     "271_300_images": {
-        "unet_lr": 0.05,
-        "text_encoder_lr": 0.05,
-        "train_batch_size": 30,
-        "max_data_loader_n_workers": 16
+        "unet_lr": 0.9,
+        "text_encoder_lr": 0.9,
+        "train_batch_size": 4,
+        "max_data_loader_n_workers": 16,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.009", 
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 5,
+        "prior_loss_weight": 0.7
     },
     "301_1000_images": {
-        "unet_lr": 0.05,
-        "text_encoder_lr": 0.05,
-        "train_batch_size": 30,
-        "max_data_loader_n_workers": 16
+        "unet_lr": 0.7,
+        "text_encoder_lr": 0.7,
+        "train_batch_size": 4,
+        "max_data_loader_n_workers": 16,
+        "optimizer_args": [
+            "decouple=True", 
+            "d_coef=1", 
+            "weight_decay=0.009", 
+            "use_bias_correction=True", 
+            "safeguard_warmup=True"
+        ],
+        "min_snr_gamma" : 5,
+        "prior_loss_weight": 0.6
     }
 }

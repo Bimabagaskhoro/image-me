@@ -401,8 +401,8 @@ def run_training(model_type, config_path, log_path):
             "--num_machines", "1",
             "--num_cpu_threads_per_process", "2",
             f"/app/sd-script/{model_type}_train_network.py",
-            "--use_ema","True",
-            "--ema_decay", "0.9999",
+            # "--use_ema","True",
+            # "--ema_decay", "0.9999",
             "--config_file", config_path
         ]
     elif model_type == "flux":
@@ -415,8 +415,8 @@ def run_training(model_type, config_path, log_path):
             "--num_machines", "1",
             "--num_cpu_threads_per_process", "2",
             f"/app/sd-scripts/{model_type}_train_network.py",
-            "--use_ema","True",
-            "--ema_decay", "0.9999",
+            # "--use_ema","True",
+            # "--ema_decay", "0.9999",
             "--config_file", config_path
         ]
     else:

@@ -59,12 +59,18 @@ def reduce_batch_size_in_config(config: dict, reduction_factor: int = 2) -> bool
     Reduce batch size in config dictionary.
     Returns True if reduction was successful, False if batch size is already at minimum.
     """
-    current_batch_size = config.get("train_batch_size", 1)
-    
+    current_batch_size = config.get("train_batch_size")
+    current_max_data_loader_n_workers = config.get("max_data_loader_n_workers")
+
     if current_batch_size > 1:
         new_batch_size = max(1, current_batch_size // reduction_factor)
         config["train_batch_size"] = new_batch_size
         print(f"Reducing batch size from {current_batch_size} to {new_batch_size}", flush=True)
+        return True
+    elif current_max_data_loader_n_workers > 1:
+        new_max_data_loader_n_workers = max(1, current_max_data_loader_n_workers // reduction_factor)
+        config["max_data_loader_n_workers"] = new_max_data_loader_n_workers
+        print(f"Reducing gradient accumulation steps from {current_max_data_loader_n_workers} to {new_gradient_accumulation_steps}", flush=True)
         return True
     else:
         print(f"Batch size is already 1, cannot reduce further", flush=True)

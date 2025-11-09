@@ -1,68 +1,68 @@
 {
-    "0_10_images": {
+    "0_30_images": {
         "unet_lr": 0.0001,
-        "text_encoder_lr": 0.00001,
-        "train_batch_size": 2,
-        "max_data_loader_n_workers": 2
-    },
-    "11_20_images": {
-        "unet_lr": 0.0001,
-        "text_encoder_lr": 0.00001,
-        "train_batch_size": 2,
-        "max_data_loader_n_workers": 2
-    },
-    "21_30_images": {
-        "unet_lr": 0.0001,
-        "text_encoder_lr": 0.00001,
-        "train_batch_size": 4,
-        "max_data_loader_n_workers": 4
-    },
-    "31_40_images": {
-        "unet_lr": 0.0001,
-        "text_encoder_lr": 0.00001,
-        "train_batch_size": 4,
-        "max_data_loader_n_workers": 4
-    },
-    "41_50_images": {
-        "unet_lr": 0.0001,
-        "text_encoder_lr": 0.00001,
-        "train_batch_size": 6,
-        "max_data_loader_n_workers": 4
-    },
-    "51_60_images": {
-        "unet_lr": 0.0001,
-        "text_encoder_lr": 0.00001,
-        "train_batch_size": 6,
-        "max_data_loader_n_workers": 4
-    },
-    "61_70_images": {
-        "unet_lr": 0.0001,
-        "text_encoder_lr": 0.00001,
-        "train_batch_size": 8,
-        "max_data_loader_n_workers": 6
-    },
-    "71_80_images": {
-        "unet_lr": 0.0001,
-        "text_encoder_lr": 0.00001,
-        "train_batch_size": 8,
-        "max_data_loader_n_workers": 6
-    },
-    "81_90_images": {
-        "unet_lr": 0.00008,
-        "text_encoder_lr": 0.000008,
-        "train_batch_size": 12,
-        "max_data_loader_n_workers": 6
-    },
-    "91_100_images": {
-        "unet_lr": 0.00008,
-        "text_encoder_lr": 0.000008,
-        "train_batch_size": 12,
-        "max_data_loader_n_workers": 6
-    },
-    "101_1000_images": {
-        "unet_lr": 0.00005,
         "text_encoder_lr": 0.000005,
-        "train_batch_size": 20,
+        "train_batch_size": 6,
+        "max_data_loader_n_workers": 4
+    },
+    "31_60_images": {
+        "unet_lr": 0.00009,
+        "text_encoder_lr": 0.0000045,
+        "train_batch_size": 10,
+        "max_data_loader_n_workers": 6
+    },
+    "61_90_images": {
+        "unet_lr": 0.00008,
+        "text_encoder_lr": 0.000004,
+        "train_batch_size": 14,
         "max_data_loader_n_workers": 8
+    },
+    "91_120_images": {
+        "unet_lr": 0.00007,
+        "text_encoder_lr": 0.0000035,
+        "train_batch_size": 18,
+        "max_data_loader_n_workers": 10
+    },
+    "121_150_images": {
+        "unet_lr": 0.00007,
+        "text_encoder_lr": 0.0000035,
+        "train_batch_size": 22,
+        "max_data_loader_n_workers": 10
+    },
+    "151_180_images": {
+        "unet_lr": 0.00006,
+        "text_encoder_lr": 0.000003,
+        "train_batch_size": 26,
+        "max_data_loader_n_workers": 12
+    },
+    "181_210_images": {
+        "unet_lr": 0.00006,
+        "text_encoder_lr": 0.000003,
+        "train_batch_size": 28,
+        "max_data_loader_n_workers": 12
+    },
+    "211_240_images": {
+        "unet_lr": 0.00005,
+        "text_encoder_lr": 0.0000025,
+        "train_batch_size": 30,
+        "max_data_loader_n_workers": 14
+    },
+    "241_270_images": {
+        "unet_lr": 0.00005,
+        "text_encoder_lr": 0.0000025,
+        "train_batch_size": 30,
+        "max_data_loader_n_workers": 14
+    },
+    "271_300_images": {
+        "unet_lr": 0.00005,
+        "text_encoder_lr": 0.0000025,
+        "train_batch_size": 30,
+        "max_data_loader_n_workers": 16
+    },
+    "301_1000_images": {
+        "unet_lr": 0.00004,
+        "text_encoder_lr": 0.000002,
+        "train_batch_size": 30,
+        "max_data_loader_n_workers": 16
     }
 }

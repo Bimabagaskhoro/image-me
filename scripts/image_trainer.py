@@ -91,17 +91,17 @@ def get_config_for_image_count(lrs_config: dict, total_images: int) -> dict:
     
     # Define the ranges and map them to config keys
     ranges = [
-        (0, 10, "0_10_images"),
-        (11, 20, "11_20_images"),
-        (21, 30, "21_30_images"),
-        (31, 40, "31_40_images"),
-        (41, 50, "41_50_images"),
-        (51, 60, "51_60_images"),
-        (61, 70, "61_70_images"),
-        (71, 80, "71_80_images"),
-        (81, 90, "81_90_images"),
-        (91, 100, "91_100_images"),
-        (101, 1000, "101_1000_images"),
+        (0, 30, "0_30_images"),
+        (31, 60, "31_60_images"),
+        (61, 90, "61_90_images"),
+        (91, 120, "91_120_images"),
+        (121, 150, "121_150_images"),
+        (151, 180, "151_180_images"),
+        (181, 210, "181_210_images"),
+        (211, 240, "211_240_images"),
+        (241, 270, "241_270_images"),
+        (271, 300, "271_300_images"),
+        (301, 1000, "301_1000_images"),
     ]
     
     for min_val, max_val, key in ranges:

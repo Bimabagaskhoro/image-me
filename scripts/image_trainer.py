@@ -5,6 +5,7 @@ Standalone script for image model training (SDXL or Flux)
 
 import argparse
 import asyncio
+import json
 import os
 import subprocess
 import sys
@@ -34,6 +35,85 @@ def get_model_path(path: str) -> str:
         if len(files) == 1 and files[0].endswith(".safetensors"):
             return os.path.join(path, files[0])
     return path
+
+
+def count_images_in_directory(directory_path: str) -> int:
+    """Count the number of image files in a directory"""
+    image_extensions = {'.jpg', '.jpeg', '.png', '.webp', '.bmp', '.gif'}
+    count = 0
+    
+    try:
+        if not os.path.exists(directory_path):
+            print(f"Directory not found: {directory_path}", flush=True)
+            return 0
+        
+        # Walk through all subdirectories
+        for root, dirs, files in os.walk(directory_path):
+            for file in files:
+                # Skip hidden files
+                if file.startswith('.'):
+                    continue
+                
+                # Check if file has an image extension
+                _, ext = os.path.splitext(file.lower())
+                if ext in image_extensions:
+                    count += 1
+    except Exception as e:
+        print(f"Error counting images in directory: {e}", flush=True)
+        return 0
+    
+    return count
+
+
+def load_lrs_config(model_type: str, is_style: bool) -> dict:
+    """Load the appropriate LRS configuration based on model type and training type"""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    if model_type == "flux":
+        config_file = os.path.join(script_dir, "lrs", "flux_config.json")
+    elif is_style:
+        config_file = os.path.join(script_dir, "lrs", "style_config.json")
+    else:
+        config_file = os.path.join(script_dir, "lrs", "person_config.json")
+    
+    try:
+        with open(config_file, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Warning: Could not load LRS config from {config_file}: {e}", flush=True)
+        return None
+
+
+def get_config_for_image_count(lrs_config: dict, total_images: int) -> dict:
+    """Get the appropriate configuration based on total image count (images × repeats)"""
+    if lrs_config is None:
+        return None
+    
+    # Define the ranges and map them to config keys
+    ranges = [
+        (0, 10, "0_10_images"),
+        (11, 20, "11_20_images"),
+        (21, 30, "21_30_images"),
+        (31, 40, "31_40_images"),
+        (41, 50, "41_50_images"),
+        (51, 60, "51_60_images"),
+        (61, 70, "61_70_images"),
+        (71, 80, "71_80_images"),
+        (81, 90, "81_90_images"),
+        (91, 100, "91_100_images"),
+        (101, 1000, "101_1000_images"),
+    ]
+    
+    for min_val, max_val, key in ranges:
+        if min_val <= total_images <= max_val:
+            if key in lrs_config:
+                return lrs_config[key]
+    
+    # If total_images > 1000, use the largest range
+    if total_images > 1000 and "201_1000_images" in lrs_config:
+        return lrs_config["201_1000_images"]
+    
+    return None
 
 
 OOM_ERROR = "torch.OutOfMemoryError: CUDA out of memory"
@@ -102,6 +182,41 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
 
     with open(config_template_path, "r") as file:
         config = toml.load(file)
+    
+    # Get repeat count from constants
+    repeat_count = cst.DIFFUSION_SDXL_REPEATS if model_type == "sdxl" else cst.DIFFUSION_FLUX_REPEATS
+    
+    # Count actual images in the training directory
+    image_count = count_images_in_directory(train_data_dir)
+    
+    # Calculate total images (images × repeats)
+    total_images = image_count * repeat_count
+    print(f"Dataset info: {image_count} images × {repeat_count} repeats = {total_images} total training images", flush=True)
+    
+    # Load and apply LRS configuration
+    lrs_config = load_lrs_config(model_type, is_style)
+    if lrs_config:
+        lrs_settings = get_config_for_image_count(lrs_config, total_images)
+        if lrs_settings:
+            print(f"Applying LRS configuration for {total_images} total images:", flush=True)
+            print(f"  - unet_lr: {lrs_settings.get('unet_lr')}", flush=True)
+            print(f"  - text_encoder_lr: {lrs_settings.get('text_encoder_lr')}", flush=True)
+            print(f"  - train_batch_size: {lrs_settings.get('train_batch_size')}", flush=True)
+            print(f"  - max_data_loader_n_workers: {lrs_settings.get('max_data_loader_n_workers')}", flush=True)
+            
+            # Apply LRS settings to config
+            if 'unet_lr' in lrs_settings:
+                config['unet_lr'] = lrs_settings['unet_lr']
+            if 'text_encoder_lr' in lrs_settings:
+                config['text_encoder_lr'] = lrs_settings['text_encoder_lr']
+            if 'train_batch_size' in lrs_settings:
+                config['train_batch_size'] = lrs_settings['train_batch_size']
+            if 'max_data_loader_n_workers' in lrs_settings:
+                config['max_data_loader_n_workers'] = lrs_settings['max_data_loader_n_workers']
+        else:
+            print(f"Warning: No LRS configuration found for {total_images} total images", flush=True)
+    else:
+        print("Warning: Could not load LRS configuration, using default values", flush=True)
 
     # Update config
     network_config_person = {
@@ -372,7 +487,7 @@ async def main():
         output_dir=train_cst.IMAGE_CONTAINER_IMAGES_PATH
     )
 
-    # Create initial config file
+    # Create initial config file (will count images and apply LRS config)
     config_path = create_config(
         args.task_id,
         model_path,

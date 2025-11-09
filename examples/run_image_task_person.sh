@@ -1,17 +1,17 @@
 # Unique task identifier
-TASK_ID="fd97f02f-82c5-40dd-bee7-73ff18fcf39c"
+TASK_ID="82db9603-3862-4b29-a1ad-98895dbd2e1c"
 
 # Base model to fine-tune (from HuggingFace)
-MODEL="stablediffusionapi/omnium-sdxl"
+MODEL="zenless-lab/sdxl-anything-xl"
 
 # Dataset ZIP file location (must be a ZIP file with images)
-DATASET_ZIP="https://gradients.s3.eu-north-1.amazonaws.com/93c2937d8f60d917_test_data.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVVZOOA7SA4UOFLPI%2F20251029%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20251029T185928Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=10268535df37757e9b9088fd879105458dc8879c11b8e8a5964caf9072a62866"
+DATASET_ZIP="https://gradients.s3.eu-north-1.amazonaws.com/d2d975a729827249_train_data.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVVZOOA7SA4UOFLPI%2F20251106%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20251106T101341Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f93aba3b08e5a33aec050fd57a3cd84baf4bdc0aa7c159961533af307513e882"
 
 # Model type: "sdxl" or "flux"
 MODEL_TYPE="sdxl"
 
 # Optional: Repository name for the trained model
-EXPECTED_REPO_NAME="fd97f02f-82c5-40dd-bee7-73ff18fcf39c"
+EXPECTED_REPO_NAME="82db9603-3862-4b29-a1ad-98895dbd2e1c"
 
 # For uploading the outputs
 HUGGINGFACE_TOKEN="Your Huggingface Token"

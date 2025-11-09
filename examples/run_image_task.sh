@@ -1,17 +1,17 @@
 # Unique task identifier
-TASK_ID="9a877904-5fe9-402a-1234-be5eb1b51f7e"
+TASK_ID="69578a7c-b5be-428a-b723-428146ff2b4c"
 
 # Base model to fine-tune (from HuggingFace)
-MODEL="mhnakif/fluxunchained-dev"
+MODEL="rayonlabs/FLUX.1-dev"
 
 # Dataset ZIP file location (must be a ZIP file with images)
-DATASET_ZIP="https://gradients.s3.eu-north-1.amazonaws.com/562149dcffb6b9a7_test_data.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVVZOOA7SA4UOFLPI%2F20251029%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20251029T234639Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ce120fe964b74b3bb04c2ceae227086298538cd9d546dc7cd206d93068e8afc4"
+DATASET_ZIP="https://gradients.s3.eu-north-1.amazonaws.com/e57d2047b768d63e_train_data.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVVZOOA7SA4UOFLPI%2F20251106%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20251106T163839Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5b2cf89f38569075a45fc8760b46b1907b1234fc9c5a84821f3fe0386dcf8f6c"
 
 # Model type: "sdxl" or "flux"
 MODEL_TYPE="flux"
 
 # Optional: Repository name for the trained model
-EXPECTED_REPO_NAME="9a877904-5fe9-402a-1234-be5eb1b51f7e"
+EXPECTED_REPO_NAME="69578a7c-b5be-428a-b723-428146ff2b4c"
 
 # For uploading the outputs
 HUGGINGFACE_TOKEN="Your Huggingface Token"

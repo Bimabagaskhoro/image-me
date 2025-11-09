@@ -1,17 +1,17 @@
 # Unique task identifier
-TASK_ID="ee120809-8765-429b-b619-7842831442e2"
+TASK_ID="05c93224-1d0a-40bb-8417-5fc0483606e0"
 
 # Base model to fine-tune (from HuggingFace)
-MODEL="dataautogpt3/CALAMITY"
+MODEL="GHArt/Lah_Mysterious_SDXL_V4.0_xl_fp16"
 
 # Dataset ZIP file location (must be a ZIP file with images)
-DATASET_ZIP="https://gradients.s3.eu-north-1.amazonaws.com/0fbc5345d79062e6_test_data.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVVZOOA7SA4UOFLPI%2F20251029%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20251029T192436Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=59641d7597278c39d8902a210520085ca66991759e05ab7c3da3414f868420f2"
+DATASET_ZIP="https://gradients.s3.eu-north-1.amazonaws.com/1878200b63a0a0ff_train_data.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVVZOOA7SA4UOFLPI%2F20251106%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20251106T102439Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=aedc9ae6d34678d21aa7371594be4cdb111ac9fdfcdff6566190233a0eafd390"
 
 # Model type: "sdxl" or "flux"
 MODEL_TYPE="sdxl"
 
 # Optional: Repository name for the trained model
-EXPECTED_REPO_NAME="ee120809-8765-429b-b619-7842831442e2"
+EXPECTED_REPO_NAME="05c93224-1d0a-40bb-8417-5fc0483606e0"
 
 # For uploading the outputs
 HUGGINGFACE_TOKEN="Your Huggingface Token"

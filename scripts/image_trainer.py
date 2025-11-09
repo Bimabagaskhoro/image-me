@@ -116,6 +116,30 @@ def get_config_for_image_count(lrs_config: dict, total_images: int) -> dict:
     return None
 
 
+def apply_reg_ratio_to_lr(value, reg_ratio: float):
+    """
+    Scale learning-rate values (single value or list/tuple of values) by reg_ratio.
+    Leaves non-numeric values unchanged.
+    """
+    if value is None:
+        return None
+
+    def _scale(v):
+        if isinstance(v, (int, float)):
+            return v * reg_ratio
+        if isinstance(v, str):
+            try:
+                return float(v) * reg_ratio
+            except ValueError:
+                return v
+        return v
+
+    if isinstance(value, (list, tuple)):
+        return [_scale(v) for v in value]
+
+    return _scale(value)
+
+
 OOM_ERROR = "torch.OutOfMemoryError: CUDA out of memory"
 OOM_ERROR_ALT = "OutOfMemoryError"
 
@@ -204,7 +228,7 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             
             # Apply reg_ratio to learning rates
             final_unet_lr = base_unet_lr * reg_ratio if base_unet_lr else None
-            final_text_encoder_lr = base_text_encoder_lr * reg_ratio if base_text_encoder_lr else None
+            final_text_encoder_lr = apply_reg_ratio_to_lr(base_text_encoder_lr, reg_ratio)
             
             print(f"Applying LRS configuration for {total_images} total images:", flush=True)
             print(f"  - Base unet_lr: {base_unet_lr} × reg_ratio: {reg_ratio} = {final_unet_lr}", flush=True)

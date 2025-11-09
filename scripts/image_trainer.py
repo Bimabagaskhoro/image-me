@@ -8,6 +8,8 @@ import asyncio
 import os
 import subprocess
 import sys
+import re
+import time
 
 import toml
 
@@ -32,6 +34,58 @@ def get_model_path(path: str) -> str:
         if len(files) == 1 and files[0].endswith(".safetensors"):
             return os.path.join(path, files[0])
     return path
+
+
+OOM_ERROR = "torch.OutOfMemoryError: CUDA out of memory"
+OOM_ERROR_ALT = "OutOfMemoryError"
+
+
+def get_error_type(log_path: str):
+    """Check if log file contains OOM error"""
+    if not os.path.exists(log_path):
+        return None
+    
+    with open(log_path, "r") as f:
+        text = f.read()
+    
+    if OOM_ERROR in text or OOM_ERROR_ALT in text:
+        return OOM_ERROR
+    
+    return None
+
+
+def reduce_batch_size_in_config(config: dict, reduction_factor: int = 2) -> bool:
+    """
+    Reduce batch size in config dictionary.
+    Returns True if reduction was successful, False if batch size is already at minimum.
+    """
+    current_batch_size = config.get("train_batch_size", 1)
+    
+    if current_batch_size > 1:
+        new_batch_size = max(1, current_batch_size // reduction_factor)
+        config["train_batch_size"] = new_batch_size
+        print(f"Reducing batch size from {current_batch_size} to {new_batch_size}", flush=True)
+        return True
+    else:
+        print(f"Batch size is already 1, cannot reduce further", flush=True)
+        return False
+
+
+def reduce_gradient_accumulation_in_config(config: dict) -> bool:
+    """
+    Reduce gradient accumulation steps in config dictionary.
+    Returns True if reduction was successful, False if already at minimum.
+    """
+    current_grad_accum = config.get("gradient_accumulation_steps", 1)
+    
+    if current_grad_accum > 1:
+        new_grad_accum = max(1, current_grad_accum // 2)
+        config["gradient_accumulation_steps"] = new_grad_accum
+        print(f"Reducing gradient accumulation steps from {current_grad_accum} to {new_grad_accum}", flush=True)
+        return True
+    else:
+        print(f"Gradient accumulation is already 1, cannot reduce further", flush=True)
+        return False
 
 def create_config(task_id, model_path, model_name, model_type, expected_repo_name):
     """Get the training data directory"""
@@ -186,7 +240,11 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
     return config_path
 
 
-def run_training(model_type, config_path):
+def run_training(model_type, config_path, log_path):
+    """
+    Run training subprocess and log output.
+    Returns True if training completed successfully, False otherwise.
+    """
     print(f"Starting training with config: {config_path}", flush=True)
 
     if model_type == "sdxl":
@@ -213,31 +271,63 @@ def run_training(model_type, config_path):
             f"/app/sd-scripts/{model_type}_train_network.py",
             "--config_file", config_path
         ]
+    else:
+        raise ValueError(f"Unknown model type: {model_type}")
 
     try:
         print("Starting training subprocess...\n", flush=True)
-        process = subprocess.Popen(
-            training_command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1
-        )
+        
+        with open(log_path, "w") as log_file:
+            log_file.write(f"Training command: {' '.join(training_command)}\n")
+            log_file.write("=" * 80 + "\n")
+            log_file.flush()
+            
+            process = subprocess.Popen(
+                training_command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1
+            )
 
-        for line in process.stdout:
-            print(line, end="", flush=True)
+            # Stream output to both console and log file
+            for line in process.stdout:
+                print(line, end="", flush=True)
+                log_file.write(line)
+                log_file.flush()
 
-        return_code = process.wait()
-        if return_code != 0:
-            raise subprocess.CalledProcessError(return_code, training_command)
+            return_code = process.wait()
+            
+            log_file.write(f"\nProcess completed with return code: {return_code}\n")
+            log_file.flush()
+            
+            if return_code != 0:
+                print("Training subprocess failed!", flush=True)
+                print(f"Exit Code: {return_code}", flush=True)
+                return False
 
         print("Training subprocess completed successfully.", flush=True)
+        return True
 
-    except subprocess.CalledProcessError as e:
-        print("Training subprocess failed!", flush=True)
-        print(f"Exit Code: {e.returncode}", flush=True)
-        print(f"Command: {' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd}", flush=True)
-        raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
+    except Exception as e:
+        print(f"Training subprocess encountered an error: {e}", flush=True)
+        with open(log_path, "a") as log_file:
+            log_file.write(f"\nException occurred: {str(e)}\n")
+        return False
+
+
+def check_training_success(output_dir: str) -> bool:
+    """
+    Check if training completed successfully by verifying output directory.
+    Returns True if training artifacts are present.
+    """
+    if not os.path.exists(output_dir):
+        return False
+    
+    # Check if there are any .safetensors files in the output directory
+    safetensors_files = [f for f in os.listdir(output_dir) if f.endswith(".safetensors")]
+    
+    return len(safetensors_files) > 0
 
 
 async def main():
@@ -250,12 +340,19 @@ async def main():
     parser.add_argument("--model-type", required=True, choices=["sdxl", "flux"], help="Model type")
     parser.add_argument("--expected-repo-name", help="Expected repository name")
     parser.add_argument("--hours-to-complete", type=float, required=True, help="Number of hours to complete the task")
+    parser.add_argument("--retries", type=int, default=5, help="Number of retries on OOM error")
     args = parser.parse_args()
 
     os.makedirs(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, exist_ok=True)
     os.makedirs(train_cst.IMAGE_CONTAINER_IMAGES_PATH, exist_ok=True)
 
     model_path = train_paths.get_image_base_model_path(args.model)
+    output_dir = train_paths.get_checkpoints_output_path(args.task_id, args.expected_repo_name)
+    
+    # Create logs directory
+    logs_dir = os.path.join(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, "logs")
+    os.makedirs(logs_dir, exist_ok=True)
+    log_path = os.path.join(logs_dir, f"train_{args.task_id}.log")
 
     # Prepare dataset
     print("Preparing dataset...", flush=True)
@@ -269,7 +366,7 @@ async def main():
         output_dir=train_cst.IMAGE_CONTAINER_IMAGES_PATH
     )
 
-    # Create config file
+    # Create initial config file
     config_path = create_config(
         args.task_id,
         model_path,
@@ -278,8 +375,77 @@ async def main():
         args.expected_repo_name,
     )
 
-    # Run training
-    run_training(args.model_type, config_path)
+    # Load the config for potential modifications
+    with open(config_path, "r") as f:
+        config = toml.load(f)
+
+    # Training loop with retry logic for OOM errors
+    train_success = False
+    for attempt in range(args.retries):
+        print(f"\n{'='*80}", flush=True)
+        print(f"Training attempt {attempt + 1}/{args.retries} for task {args.task_id}", flush=True)
+        print(f"{'='*80}\n", flush=True)
+
+        # If this is a retry (not the first attempt), handle OOM error
+        if attempt > 0:
+            error_type = get_error_type(log_path)
+            
+            if error_type == OOM_ERROR:
+                print(f"Detected OOM error on attempt {attempt}. Applying memory optimizations...", flush=True)
+                
+                optimization_applied = False
+                
+                # Strategy 1: Reduce batch size (works for both SDXL and Flux)
+                if reduce_batch_size_in_config(config):
+                    optimization_applied = True
+                # Strategy 2: Reduce gradient accumulation (for Flux mainly)
+                elif args.model_type == "flux" and reduce_gradient_accumulation_in_config(config):
+                    optimization_applied = True
+                
+                if not optimization_applied:
+                    print("All memory optimization strategies exhausted. Cannot proceed.", flush=True)
+                    break
+                
+                # Save updated config and retry training
+                save_config_toml(config, config_path)
+                print(f"Updated config saved to {config_path}", flush=True)
+                print(f"Will retry training with optimized settings...", flush=True)
+            else:
+                print(f"Training failed on attempt {attempt} but no OOM error detected. Retrying...", flush=True)
+        
+        # Clear/reset log file
+        with open(log_path, "w") as f:
+            f.write(f"STARTING TRAINING - Attempt {attempt + 1}/{args.retries}\n")
+            f.write(f"Config: {config_path}\n")
+            f.write("=" * 80 + "\n")
+
+        # Run training
+        success = run_training(args.model_type, config_path, log_path)
+        
+        # Wait a bit before checking results
+        time.sleep(3)
+        
+        # Check if training was successful
+        if success and check_training_success(output_dir):
+            print(f"\nTraining completed successfully for task {args.task_id}!", flush=True)
+            train_success = True
+            break
+        else:
+            print(f"\nTraining attempt {attempt + 1} failed or produced no output.", flush=True)
+            if attempt < args.retries - 1:
+                print(f"Retrying...\n", flush=True)
+                time.sleep(2)
+    
+    if not train_success:
+        print(f"\n{'='*80}", flush=True)
+        print(f"Training failed for task {args.task_id} after {args.retries} attempts", flush=True)
+        print(f"{'='*80}\n", flush=True)
+        raise RuntimeError(f"Training failed after {args.retries} attempts")
+    
+    print(f"\n{'='*80}", flush=True)
+    print(f"Training pipeline completed successfully for task {args.task_id}", flush=True)
+    print(f"Output saved to: {output_dir}", flush=True)
+    print(f"{'='*80}\n", flush=True)
 
 
 if __name__ == "__main__":

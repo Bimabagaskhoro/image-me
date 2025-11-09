@@ -173,7 +173,7 @@ def reduce_gradient_accumulation_in_config(config: dict) -> bool:
         print(f"Gradient accumulation is already 1, cannot reduce further", flush=True)
         return False
 
-def create_config(task_id, model_path, model_name, model_type, expected_repo_name):
+def create_config(task_id, model_path, model_name, model_type, expected_repo_name, reg_ratio=1.0):
     """Get the training data directory"""
     train_data_dir = train_paths.get_image_training_images_dir(task_id)
 
@@ -198,17 +198,25 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
     if lrs_config:
         lrs_settings = get_config_for_image_count(lrs_config, total_images)
         if lrs_settings:
+            # Get base learning rates from LRS config
+            base_unet_lr = lrs_settings.get('unet_lr')
+            base_text_encoder_lr = lrs_settings.get('text_encoder_lr')
+            
+            # Apply reg_ratio to learning rates
+            final_unet_lr = base_unet_lr * reg_ratio if base_unet_lr else None
+            final_text_encoder_lr = base_text_encoder_lr * reg_ratio if base_text_encoder_lr else None
+            
             print(f"Applying LRS configuration for {total_images} total images:", flush=True)
-            print(f"  - unet_lr: {lrs_settings.get('unet_lr')}", flush=True)
-            print(f"  - text_encoder_lr: {lrs_settings.get('text_encoder_lr')}", flush=True)
+            print(f"  - Base unet_lr: {base_unet_lr} × reg_ratio: {reg_ratio} = {final_unet_lr}", flush=True)
+            print(f"  - Base text_encoder_lr: {base_text_encoder_lr} × reg_ratio: {reg_ratio} = {final_text_encoder_lr}", flush=True)
             print(f"  - train_batch_size: {lrs_settings.get('train_batch_size')}", flush=True)
             print(f"  - max_data_loader_n_workers: {lrs_settings.get('max_data_loader_n_workers')}", flush=True)
             
-            # Apply LRS settings to config
-            if 'unet_lr' in lrs_settings:
-                config['unet_lr'] = lrs_settings['unet_lr']
-            if 'text_encoder_lr' in lrs_settings:
-                config['text_encoder_lr'] = lrs_settings['text_encoder_lr']
+            # Apply LRS settings to config with reg_ratio applied to learning rates
+            if final_unet_lr is not None:
+                config['unet_lr'] = final_unet_lr
+            if final_text_encoder_lr is not None:
+                config['text_encoder_lr'] = final_text_encoder_lr
             if 'train_batch_size' in lrs_settings:
                 config['train_batch_size'] = lrs_settings['train_batch_size']
             if 'max_data_loader_n_workers' in lrs_settings:
@@ -462,6 +470,7 @@ async def main():
     parser.add_argument("--expected-repo-name", help="Expected repository name")
     parser.add_argument("--hours-to-complete", type=float, required=True, help="Number of hours to complete the task")
     parser.add_argument("--retries", type=int, default=5, help="Number of retries on OOM error")
+    parser.add_argument("--reg-ratio", type=float, help="Reg ratio to use for training", default=1.020712)
     args = parser.parse_args()
 
     os.makedirs(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, exist_ok=True)
@@ -469,6 +478,7 @@ async def main():
 
     model_path = train_paths.get_image_base_model_path(args.model)
     output_dir = train_paths.get_checkpoints_output_path(args.task_id, args.expected_repo_name)
+    reg_ratio = args.reg_ratio
     
     # Create logs directory
     logs_dir = os.path.join(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, "logs")
@@ -494,6 +504,7 @@ async def main():
         args.model,
         args.model_type,
         args.expected_repo_name,
+        reg_ratio,
     )
 
     # Load the config for potential modifications

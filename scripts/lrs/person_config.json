@@ -1,13 +1,13 @@
 {
     "0_30_images": {
-        "unet_lr": 0.1,
-        "text_encoder_lr": 0.1,
+        "unet_lr": 1,
+        "text_encoder_lr": 11,
         "train_batch_size": 6,
         "max_data_loader_n_workers": 4
     },
     "31_60_images": {
-        "unet_lr": 0.09,
-        "text_encoder_lr": 0.09,
+        "unet_lr": 0.9,
+        "text_encoder_lr": 0.9,
         "train_batch_size": 10,
         "max_data_loader_n_workers": 6
     },

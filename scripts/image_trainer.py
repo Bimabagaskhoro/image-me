@@ -228,6 +228,7 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             print(f"  - min_snr_gamma: {lrs_settings.get('min_snr_gamma')}", flush=True)
             print(f"  - lr_warmup_steps: {lrs_settings.get('lr_warmup_steps')}", flush=True)
             print(f"  - max_grad_norm: {lrs_settings.get('max_grad_norm')}", flush=True)
+            print(f"  - max_train_epochs: {lrs_settings.get('max_train_epochs')}", flush=True)
 
 
             if final_unet_lr is not None:
@@ -244,6 +245,8 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
                 config['lr_warmup_steps'] = lrs_settings.get('lr_warmup_steps')
             if lrs_settings.get('max_grad_norm') is not None:
                 config['max_grad_norm'] = lrs_settings.get('max_grad_norm')
+            if lrs_settings.get('max_train_epochs') is not None:
+                config['max_train_epochs'] = lrs_settings.get('max_train_epochs')
 
             for optional_key in [
                 "train_batch_size",

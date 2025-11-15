@@ -231,6 +231,8 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
                 config['unet_lr'] = final_unet_lr
             if final_text_encoder_lr is not None:
                 config['text_encoder_lr'] = final_text_encoder_lr
+            if lrs_settings.get('train_batch_size') is not None:
+                config['train_batch_size'] = lrs_settings.get('train_batch_size')
 
             for optional_key in [
                 "train_batch_size",

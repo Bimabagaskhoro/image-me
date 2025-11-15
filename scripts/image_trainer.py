@@ -234,6 +234,7 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             print(f"  - network_alpha: {lrs_settings.get('network_alpha')}", flush=True)
             print(f"  - network_dim: {lrs_settings.get('network_dim')}", flush=True)
             print(f"  - network_args: {lrs_settings.get('network_args')}", flush=True)
+            print(f"  - max_train_steps: {lrs_settings.get('max_train_steps')}", flush=True)
 
 
             if final_unet_lr is not None:
@@ -258,6 +259,8 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
                 config['network_dim'] = lrs_settings.get('network_dim')
             if lrs_settings.get('network_args') is not None:
                 config['network_args'] = lrs_settings.get('network_args')
+            if lrs_settings.get('max_train_steps') is not None:
+                config['max_train_steps'] = lrs_settings.get('max_train_steps')
 
             for optional_key in [
                 "train_batch_size",

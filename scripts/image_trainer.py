@@ -274,7 +274,9 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             print(f"Warning: No LRS configuration found for model '{model_name}'", flush=True)
     else:
         print("Warning: Could not load LRS configuration, using default values", flush=True)
-
+    # Ensure lr_scheduler_kwargs is preserved correctly
+    if 'lr_scheduler_kwargs' not in config or not config.get('lr_scheduler_kwargs'):
+        config['lr_scheduler_kwargs'] = {'min_lr_rate': 0.25}
     config["pretrained_model_name_or_path"] = model_path
     config["train_data_dir"] = train_data_dir
     output_dir = train_paths.get_checkpoints_output_path(task_id, expected_repo_name)

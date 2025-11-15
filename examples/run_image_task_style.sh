@@ -1,17 +1,17 @@
 # Unique task identifier
-TASK_ID="05c93224-1d0a-40bb-8417-5fc0483606e0"
+TASK_ID="2cc97051-f1c3-4ce7-a1d3-d3f746ddff99"
 
 # Base model to fine-tune (from HuggingFace)
-MODEL="GHArt/Lah_Mysterious_SDXL_V4.0_xl_fp16"
+MODEL="zenless-lab/sdxl-aam-xl-anime-mix"
 
 # Dataset ZIP file location (must be a ZIP file with images)
-DATASET_ZIP="https://gradients.s3.eu-north-1.amazonaws.com/1878200b63a0a0ff_train_data.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVVZOOA7SA4UOFLPI%2F20251106%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20251106T102439Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=aedc9ae6d34678d21aa7371594be4cdb111ac9fdfcdff6566190233a0eafd390"
+DATASET_ZIP="https://gradients.s3.eu-north-1.amazonaws.com/a40525e229c5e0ee_train_data.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVVZOOA7SA4UOFLPI%2F20251114%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20251114T045303Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=7a182680a490067a53613881ff689464dfaad45c14a44b9a556177c603d91674"
 
 # Model type: "sdxl" or "flux"
 MODEL_TYPE="sdxl"
 
 # Optional: Repository name for the trained model
-EXPECTED_REPO_NAME="05c93224-1d0a-40bb-8417-5fc0483606e0"
+EXPECTED_REPO_NAME="2cc97051-f1c3-4ce7-a1d3-d3f746ddff99"
 
 # For uploading the outputs
 HUGGINGFACE_TOKEN="Your Huggingface Token"
@@ -64,7 +64,8 @@ docker run --rm --gpus all \
   --dataset-zip "$DATASET_ZIP" \
   --model-type "$MODEL_TYPE" \
   --expected-repo-name "$EXPECTED_REPO_NAME" \
-  --hours-to-complete 1
+  --hours-to-complete 1 \
+  --reg-ratio 7.75
 
 echo "Uploading model to HuggingFace..."
 docker run --rm --gpus all \

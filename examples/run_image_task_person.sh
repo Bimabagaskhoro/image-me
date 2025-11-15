@@ -64,7 +64,8 @@ docker run --rm --gpus all \
   --dataset-zip "$DATASET_ZIP" \
   --model-type "$MODEL_TYPE" \
   --expected-repo-name "$EXPECTED_REPO_NAME" \
-  --hours-to-complete 1
+  --hours-to-complete 1 \
+  --reg-ratio 0.98
 
 echo "Uploading model to HuggingFace..."
 docker run --rm --gpus all \

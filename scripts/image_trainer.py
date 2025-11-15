@@ -71,7 +71,9 @@ def load_lrs_config(model_type: str, is_style: bool) -> dict:
     script_dir = os.path.dirname(os.path.abspath(__file__))
     config_dir = os.path.join(script_dir, "lrs")
 
-    if is_style:
+    if model_type == "flux":
+        config_file = os.path.join(config_dir, "flux.json")
+    elif is_style:
         config_file = os.path.join(config_dir, "style_config.json")
     else:
         config_file = os.path.join(config_dir, "person_config.json")

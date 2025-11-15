@@ -145,8 +145,8 @@
             ]
         },
         "84b1be29d81de0bf88d6c4033943d2bc4b543d9ebba9e1c9678296237f147466": {
-            "unet_lr": 8e-05,
-            "text_encoder_lr": 8e-06,
+            "unet_lr": 0.00064,
+            "text_encoder_lr": 6.4e-05,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
             "max_train_epochs": 3,

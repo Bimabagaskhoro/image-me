@@ -229,6 +229,9 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             print(f"  - lr_warmup_steps: {lrs_settings.get('lr_warmup_steps')}", flush=True)
             print(f"  - max_grad_norm: {lrs_settings.get('max_grad_norm')}", flush=True)
             print(f"  - max_train_epochs: {lrs_settings.get('max_train_epochs')}", flush=True)
+            print(f"  - network_alpha: {lrs_settings.get('lr_warmup_steps')}", flush=True)
+            print(f"  - network_dim: {lrs_settings.get('max_grad_norm')}", flush=True)
+            print(f"  - network_args: {lrs_settings.get('max_train_epochs')}", flush=True)
 
 
             if final_unet_lr is not None:
@@ -247,6 +250,12 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
                 config['max_grad_norm'] = lrs_settings.get('max_grad_norm')
             if lrs_settings.get('max_train_epochs') is not None:
                 config['max_train_epochs'] = lrs_settings.get('max_train_epochs')
+            if lrs_settings.get('network_alpha') is not None:
+                config['network_alpha'] = lrs_settings.get('network_alpha')
+            if lrs_settings.get('network_dim') is not None:
+                config['network_dim'] = lrs_settings.get('network_dim')
+            if lrs_settings.get('network_args') is not None:
+                config['network_args'] = lrs_settings.get('network_args')
 
             for optional_key in [
                 "train_batch_size",
@@ -266,119 +275,12 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
     else:
         print("Warning: Could not load LRS configuration, using default values", flush=True)
 
-    # Update config
-    network_config_person = {
-        "stabilityai/stable-diffusion-xl-base-1.0": 235,
-        "Lykon/dreamshaper-xl-1-0": 235,
-        "Lykon/art-diffusion-xl-0.9": 235,
-        "SG161222/RealVisXL_V4.0": 467,
-        "stablediffusionapi/protovision-xl-v6.6": 235,
-        "stablediffusionapi/omnium-sdxl": 235,
-        "GraydientPlatformAPI/realism-engine2-xl": 235,
-        "GraydientPlatformAPI/albedobase2-xl": 467,
-        "KBlueLeaf/Kohaku-XL-Zeta": 235,
-        "John6666/hassaku-xl-illustrious-v10style-sdxl": 228,
-        "John6666/nova-anime-xl-pony-v5-sdxl": 235,
-        "cagliostrolab/animagine-xl-4.0": 699,
-        "dataautogpt3/CALAMITY": 235,
-        "dataautogpt3/ProteusSigma": 235,
-        "dataautogpt3/ProteusV0.5": 467,
-        "dataautogpt3/TempestV0.1": 456,
-        "ehristoforu/Visionix-alpha": 235,
-        "femboysLover/RealisticStockPhoto-fp16": 467,
-        "fluently/Fluently-XL-Final": 228,
-        "mann-e/Mann-E_Dreams": 456,
-        "misri/leosamsHelloworldXL_helloworldXL70": 235,
-        "misri/zavychromaxl_v90": 235,
-        "openart-custom/DynaVisionXL": 228,
-        "recoilme/colorfulxl": 228,
-        "zenless-lab/sdxl-aam-xl-anime-mix": 456,
-        "zenless-lab/sdxl-anima-pencil-xl-v5": 228,
-        "zenless-lab/sdxl-anything-xl": 228,
-        "zenless-lab/sdxl-blue-pencil-xl-v7": 467,
-        "Corcelio/mobius": 228,
-        "GHArt/Lah_Mysterious_SDXL_V4.0_xl_fp16": 235,
-        "OnomaAIResearch/Illustrious-xl-early-release-v0": 228
-    }
-
-    network_config_style = {
-        "stabilityai/stable-diffusion-xl-base-1.0": 235,
-        "Lykon/dreamshaper-xl-1-0": 235,
-        "Lykon/art-diffusion-xl-0.9": 235,
-        "SG161222/RealVisXL_V4.0": 235,
-        "stablediffusionapi/protovision-xl-v6.6": 235,
-        "stablediffusionapi/omnium-sdxl": 235,
-        "GraydientPlatformAPI/realism-engine2-xl": 235,
-        "GraydientPlatformAPI/albedobase2-xl": 235,
-        "KBlueLeaf/Kohaku-XL-Zeta": 235,
-        "John6666/hassaku-xl-illustrious-v10style-sdxl": 235,
-        "John6666/nova-anime-xl-pony-v5-sdxl": 235,
-        "cagliostrolab/animagine-xl-4.0": 235,
-        "dataautogpt3/CALAMITY": 235,
-        "dataautogpt3/ProteusSigma": 235,
-        "dataautogpt3/ProteusV0.5": 235,
-        "dataautogpt3/TempestV0.1": 228,
-        "ehristoforu/Visionix-alpha": 235,
-        "femboysLover/RealisticStockPhoto-fp16": 235,
-        "fluently/Fluently-XL-Final": 235,
-        "mann-e/Mann-E_Dreams": 235,
-        "misri/leosamsHelloworldXL_helloworldXL70": 235,
-        "misri/zavychromaxl_v90": 235,
-        "openart-custom/DynaVisionXL": 235,
-        "recoilme/colorfulxl": 235,
-        "zenless-lab/sdxl-aam-xl-anime-mix": 235,
-        "zenless-lab/sdxl-anima-pencil-xl-v5": 235,
-        "zenless-lab/sdxl-anything-xl": 235,
-        "zenless-lab/sdxl-blue-pencil-xl-v7": 235,
-        "Corcelio/mobius": 235,
-        "GHArt/Lah_Mysterious_SDXL_V4.0_xl_fp16": 235,
-        "OnomaAIResearch/Illustrious-xl-early-release-v0": 235
-    }
-
-    config_mapping = {
-        228: {
-            "network_dim": 32,
-            "network_alpha": 32,
-            "network_args": []
-        },
-        235: {
-            "network_dim": 32,
-            "network_alpha": 32,
-            "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
-        },
-        456: {
-            "network_dim": 64,
-            "network_alpha": 64,
-            "network_args": []
-        },
-        467: {
-            "network_dim": 64,
-            "network_alpha": 64,
-            "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
-        },
-        699: {
-            "network_dim": 96,
-            "network_alpha": 96,
-            "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
-        },
-    }
-
     config["pretrained_model_name_or_path"] = model_path
     config["train_data_dir"] = train_data_dir
     output_dir = train_paths.get_checkpoints_output_path(task_id, expected_repo_name)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
     config["output_dir"] = output_dir
-
-    if model_type == "sdxl":
-        if is_style:
-            network_config = config_mapping[network_config_style[model_name]]
-        else:
-            network_config = config_mapping[network_config_person[model_name]]
-
-        config["network_dim"] = network_config["network_dim"]
-        config["network_alpha"] = network_config["network_alpha"]
-        config["network_args"] = network_config["network_args"]
 
     # Save config to file
     config_path = os.path.join(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, f"{task_id}.toml")

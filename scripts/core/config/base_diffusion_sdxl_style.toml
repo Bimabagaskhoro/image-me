@@ -58,6 +58,8 @@ text_encoder_lr = 5e-6
 ###### lr scheduler ######
 lr_scheduler = "cosine_with_min_lr"
 lr_warmup_steps = 35
+[lr_scheduler_kwargs]
+min_lr = 0.25
 
 ###### noise offset ######
 # noise_offset_type = "Original"

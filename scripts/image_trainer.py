@@ -224,8 +224,11 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             print(f"  - Base unet_lr: {base_unet_lr} × reg_ratio: {reg_ratio} = {final_unet_lr}", flush=True)
             print(f"  - Base text_encoder_lr: {base_text_encoder_lr} × reg_ratio: {reg_ratio} = {final_text_encoder_lr}", flush=True)
             print(f"  - train_batch_size: {lrs_settings.get('train_batch_size')}", flush=True)
-            print(f"  - optimizer_args: {lrs_settings.get('optimizer_args')}", flush=True)
-            print(f"  - network_alpha: {lrs_settings.get('network_alpha')}", flush=True)
+            print(f"  - gradient_accumulation_steps: {lrs_settings.get('gradient_accumulation_steps')}", flush=True)
+            print(f"  - min_snr_gamma: {lrs_settings.get('min_snr_gamma')}", flush=True)
+            print(f"  - lr_warmup_steps: {lrs_settings.get('lr_warmup_steps')}", flush=True)
+            print(f"  - max_grad_norm: {lrs_settings.get('max_grad_norm')}", flush=True)
+
 
             if final_unet_lr is not None:
                 config['unet_lr'] = final_unet_lr
@@ -233,6 +236,14 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
                 config['text_encoder_lr'] = final_text_encoder_lr
             if lrs_settings.get('train_batch_size') is not None:
                 config['train_batch_size'] = lrs_settings.get('train_batch_size')
+            if lrs_settings.get('gradient_accumulation_steps') is not None:
+                config['gradient_accumulation_steps'] = lrs_settings.get('gradient_accumulation_steps')
+            if lrs_settings.get('min_snr_gamma') is not None:
+                config['min_snr_gamma'] = lrs_settings.get('min_snr_gamma')
+            if lrs_settings.get('lr_warmup_steps') is not None:
+                config['lr_warmup_steps'] = lrs_settings.get('lr_warmup_steps')
+            if lrs_settings.get('max_grad_norm') is not None:
+                config['max_grad_norm'] = lrs_settings.get('max_grad_norm')
 
             for optional_key in [
                 "train_batch_size",

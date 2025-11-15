@@ -5,6 +5,7 @@ Standalone script for image model training (SDXL or Flux)
 
 import argparse
 import asyncio
+import hashlib
 import json
 import os
 import subprocess
@@ -68,13 +69,12 @@ def count_images_in_directory(directory_path: str) -> int:
 def load_lrs_config(model_type: str, is_style: bool) -> dict:
     """Load the appropriate LRS configuration based on model type and training type"""
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    if model_type == "flux":
-        config_file = os.path.join(script_dir, "lrs", "flux_config.json")
-    elif is_style:
-        config_file = os.path.join(script_dir, "lrs", "style_config.json")
+    config_dir = os.path.join(script_dir, "lrs")
+
+    if is_style:
+        config_file = os.path.join(config_dir, "style_config.json")
     else:
-        config_file = os.path.join(script_dir, "lrs", "person_config.json")
+        config_file = os.path.join(config_dir, "person_config.json")
     
     try:
         with open(config_file, 'r') as f:
@@ -84,35 +84,33 @@ def load_lrs_config(model_type: str, is_style: bool) -> dict:
         return None
 
 
-def get_config_for_image_count(lrs_config: dict, total_images: int) -> dict:
-    """Get the appropriate configuration based on total image count (images × repeats)"""
-    if lrs_config is None:
+def merge_model_config(default_config: dict, model_config: dict) -> dict:
+    """Merge default config with model-specific overrides."""
+    merged = {}
+
+    if isinstance(default_config, dict):
+        merged.update(default_config)
+
+    if isinstance(model_config, dict):
+        merged.update(model_config)
+
+    return merged if merged else None
+
+
+def get_config_for_model(lrs_config: dict, model_name: str) -> dict:
+    """Get configuration overrides based on model name."""
+    if not isinstance(lrs_config, dict):
         return None
-    
-    # Define the ranges and map them to config keys
-    ranges = [
-        (0, 30, "0_30_images"),
-        (31, 60, "31_60_images"),
-        (61, 90, "61_90_images"),
-        (91, 120, "91_120_images"),
-        (121, 150, "121_150_images"),
-        (151, 180, "151_180_images"),
-        (181, 210, "181_210_images"),
-        (211, 240, "211_240_images"),
-        (241, 270, "241_270_images"),
-        (271, 300, "271_300_images"),
-        (301, 1000, "301_1000_images"),
-    ]
-    
-    for min_val, max_val, key in ranges:
-        if min_val <= total_images <= max_val:
-            if key in lrs_config:
-                return lrs_config[key]
-    
-    # If total_images > 1000, use the largest range
-    if total_images > 1000 and "201_1000_images" in lrs_config:
-        return lrs_config["201_1000_images"]
-    
+
+    data = lrs_config.get("data")
+    default_config = lrs_config.get("default", {})
+
+    if isinstance(data, dict) and model_name in data:
+        return merge_model_config(default_config, data.get(model_name))
+
+    if default_config:
+        return default_config
+
     return None
 
 
@@ -206,62 +204,49 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
 
     with open(config_template_path, "r") as file:
         config = toml.load(file)
-    
-    # Get repeat count from constants
-    repeat_count = cst.DIFFUSION_SDXL_REPEATS if model_type == "sdxl" else cst.DIFFUSION_FLUX_REPEATS
-    
-    # Count actual images in the training directory
-    image_count = count_images_in_directory(train_data_dir)
-    
-    # Calculate total images (images × repeats)
-    total_images = image_count * repeat_count
-    print(f"Dataset info: {image_count} images × {repeat_count} repeats = {total_images} total training images", flush=True)
+
+    normalized_model_type = (model_type or "").lower()
     
     # Load and apply LRS configuration
     lrs_config = load_lrs_config(model_type, is_style)
     if lrs_config:
-        lrs_settings = get_config_for_image_count(lrs_config, total_images)
+        model_hash = hash_model(model_name)
+        lrs_settings = get_config_for_model(lrs_config, model_hash)
+
         if lrs_settings:
-            # Get base learning rates from LRS config
             base_unet_lr = lrs_settings.get('unet_lr')
             base_text_encoder_lr = lrs_settings.get('text_encoder_lr')
-            
-            # Apply reg_ratio to learning rates
+
             final_unet_lr = base_unet_lr * reg_ratio if base_unet_lr else None
             final_text_encoder_lr = apply_reg_ratio_to_lr(base_text_encoder_lr, reg_ratio)
-            
-            print(f"Applying LRS configuration for {total_images} total images:", flush=True)
+
+            print(f"Applying LRS configuration for model '{model_name}' (hash: {model_hash}):", flush=True)
             print(f"  - Base unet_lr: {base_unet_lr} × reg_ratio: {reg_ratio} = {final_unet_lr}", flush=True)
             print(f"  - Base text_encoder_lr: {base_text_encoder_lr} × reg_ratio: {reg_ratio} = {final_text_encoder_lr}", flush=True)
             print(f"  - train_batch_size: {lrs_settings.get('train_batch_size')}", flush=True)
-            # print(f"  - max_data_loader_n_workers: {lrs_settings.get('max_data_loader_n_workers')}", flush=True)
-            print(f"  - prior_loss_weight: {lrs_settings.get('prior_loss_weight')}", flush=True)
             print(f"  - optimizer_args: {lrs_settings.get('optimizer_args')}", flush=True)
-            print(f"  - min_snr_gamma: {lrs_settings.get('min_snr_gamma')}", flush=True)
-            print(f"  - prior_loss_weight: {lrs_settings.get('prior_loss_weight')}", flush=True)
             print(f"  - network_alpha: {lrs_settings.get('network_alpha')}", flush=True)
-            
-            # Apply LRS settings to config with reg_ratio applied to learning rates
+
             if final_unet_lr is not None:
                 config['unet_lr'] = final_unet_lr
             if final_text_encoder_lr is not None:
                 config['text_encoder_lr'] = final_text_encoder_lr
-            if 'train_batch_size' in lrs_settings:
-                config['train_batch_size'] = lrs_settings['train_batch_size']
-            # if 'max_data_loader_n_workers' in lrs_settings:
-            #     config['max_data_loader_n_workers'] = lrs_settings['max_data_loader_n_workers']
-            if 'optimizer_args' in lrs_settings:
-                config['optimizer_args'] = lrs_settings['optimizer_args']
-            if 'min_snr_gamma' in lrs_settings:
-                config['min_snr_gamma'] = lrs_settings['min_snr_gamma']
-            if 'prior_loss_weight' in lrs_settings:
-                config['prior_loss_weight'] = lrs_settings['prior_loss_weight']
-            if 'max_grad_norm' in lrs_settings:
-                config['max_grad_norm'] = lrs_settings['max_grad_norm']        
-            if 'network_alpha' in lrs_settings:
-                config['network_alpha'] = lrs_settings['network_alpha']
+
+            for optional_key in [
+                "train_batch_size",
+                "max_data_loader_n_workers",
+                "optimizer_args",
+                "min_snr_gamma",
+                "prior_loss_weight",
+                "max_grad_norm",
+                "network_alpha",
+                "network_dim",
+                "network_args",
+            ]:
+                if optional_key in lrs_settings:
+                    config[optional_key] = lrs_settings[optional_key]
         else:
-            print(f"Warning: No LRS configuration found for {total_images} total images", flush=True)
+            print(f"Warning: No LRS configuration found for model '{model_name}'", flush=True)
     else:
         print("Warning: Could not load LRS configuration, using default values", flush=True)
 
@@ -375,31 +360,9 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
         else:
             network_config = config_mapping[network_config_person[model_name]]
 
-        # Get base network dimensions
-        base_network_dim = network_config["network_dim"]
-        base_network_alpha = network_config["network_alpha"]
-        
-        # OPTIONAL: Apply B-LoRA optimization for better style/content separation
-        # Set ENABLE_BLORA = False to disable if you encounter compatibility issues
-        ENABLE_BLORA = True
-        
-        if ENABLE_BLORA:
-            training_type = TrainingType.STYLE if is_style else TrainingType.PERSON
-            blora_config = BLoRAConfig.get_config(training_type, base_network_dim, base_network_alpha)
-            
-            # Use B-LoRA optimized settings
-            config["network_dim"] = blora_config["network_dim"]
-            config["network_alpha"] = blora_config["network_alpha"]
-            config["network_args"] = blora_config["network_args"]
-            
-            print(f"B-LoRA Config Applied: {blora_config['description']}", flush=True)
-        else:
-            # Use default network config
-            config["network_dim"] = base_network_dim
-            config["network_alpha"] = base_network_alpha
-            config["network_args"] = network_config["network_args"]
-            
-            print(f"Using standard LoRA config (B-LoRA disabled)", flush=True)
+        config["network_dim"] = network_config["network_dim"]
+        config["network_alpha"] = network_config["network_alpha"]
+        config["network_args"] = network_config["network_args"]
 
     # Save config to file
     config_path = os.path.join(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, f"{task_id}.toml")
@@ -425,8 +388,6 @@ def run_training(model_type, config_path, log_path):
             "--num_machines", "1",
             "--num_cpu_threads_per_process", "2",
             f"/app/sd-script/{model_type}_train_network.py",
-            # "--use_ema","True",
-            # "--ema_decay", "0.9999",
             "--config_file", config_path
         ]
     elif model_type == "flux":
@@ -439,12 +400,8 @@ def run_training(model_type, config_path, log_path):
             "--num_machines", "1",
             "--num_cpu_threads_per_process", "2",
             f"/app/sd-scripts/{model_type}_train_network.py",
-            # "--use_ema","True",
-            # "--ema_decay", "0.9999",
             "--config_file", config_path
         ]
-    else:
-        raise ValueError(f"Unknown model type: {model_type}")
 
     try:
         print("Starting training subprocess...\n", flush=True)
@@ -500,7 +457,11 @@ def check_training_success(output_dir: str) -> bool:
     safetensors_files = [f for f in os.listdir(output_dir) if f.endswith(".safetensors")]
     
     return len(safetensors_files) > 0
-
+    
+def hash_model(model: str) -> str:
+    model_bytes = model.encode('utf-8')
+    hashed = hashlib.sha256(model_bytes).hexdigest()
+    return hashed 
 
 async def main():
     print("---STARTING IMAGE TRAINING SCRIPT---", flush=True)

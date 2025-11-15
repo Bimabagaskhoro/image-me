@@ -296,7 +296,7 @@
             "unet_lr": 2e-05,
             "text_encoder_lr": 2e-06,
             "min_snr_gamma" : 5,
-            "train_batch_size" : 4,
+            "train_batch_size" : 32,
             "max_grad_norm" : 1.314,
             "lr_warmup_steps" : 25,
             "max_train_epochs" : 3,

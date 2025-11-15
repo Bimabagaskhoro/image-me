@@ -415,8 +415,8 @@
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
         },
         "87a20676586c53891563895be0408c6109b83f1d891700dd6ff6c02a25cd6c47": {
-            "unet_lr": 0.00012,
-            "text_encoder_lr": 6e-05,
+            "unet_lr": 0.00372,
+            "text_encoder_lr": 0.00186,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,

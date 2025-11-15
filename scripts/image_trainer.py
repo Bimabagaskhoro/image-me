@@ -306,7 +306,8 @@ def run_training(model_type, config_path, log_path):
             "--num_machines", "1",
             "--num_cpu_threads_per_process", "2",
             f"/app/sd-script/{model_type}_train_network.py",
-            "--config_file", config_path
+            "--config_file", config_path,
+            "--lr_scheduler_kwargs", "min_lr=0.000001"
         ]
     elif model_type == "flux":
         training_command = [

@@ -313,11 +313,11 @@
             ]
         },
         "158598455e814319c65ccbf8bbae049200601b2ac4fb1429fed6158f2f5ac8bd": {
-            "unet_lr": 0.0001,
-            "text_encoder_lr": 1e-05,
-            "min_snr_gamma": 5,
+            "unet_lr": 0.0017100000000000001,
+            "text_encoder_lr": 0.000171,
+            "min_snr_gamma": 8,
             "train_batch_size": 5,
-            "max_train_epochs": 3,
+            "max_train_epochs": 10,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": [

@@ -229,9 +229,9 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             print(f"  - lr_warmup_steps: {lrs_settings.get('lr_warmup_steps')}", flush=True)
             print(f"  - max_grad_norm: {lrs_settings.get('max_grad_norm')}", flush=True)
             print(f"  - max_train_epochs: {lrs_settings.get('max_train_epochs')}", flush=True)
-            print(f"  - network_alpha: {lrs_settings.get('lr_warmup_steps')}", flush=True)
-            print(f"  - network_dim: {lrs_settings.get('max_grad_norm')}", flush=True)
-            print(f"  - network_args: {lrs_settings.get('max_train_epochs')}", flush=True)
+            print(f"  - network_alpha: {lrs_settings.get('network_alpha')}", flush=True)
+            print(f"  - network_dim: {lrs_settings.get('network_dim')}", flush=True)
+            print(f"  - network_args: {lrs_settings.get('network_args')}", flush=True)
 
 
             if final_unet_lr is not None:

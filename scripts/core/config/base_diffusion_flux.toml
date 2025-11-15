@@ -30,7 +30,6 @@ lr_scheduler = "cosine_with_min_lr"
 lr_warmup_steps = 10                                                                                                                                                     
 lr_scheduler_args = []                                                                                                                                                         
 lr_scheduler_num_cycles = 1                                                                                                                                                    
-lr_scheduler_power = 1
 lr_scheduler_min_lr_ratio = 0.25   
 lr_scheduler_power = 1                                                                                                                                                      
 max_bucket_reso = 2048                                                                                                                                                         

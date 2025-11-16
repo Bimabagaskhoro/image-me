@@ -94,8 +94,8 @@
             "network_args": []
         },
         "84b1be29d81de0bf88d6c4033943d2bc4b543d9ebba9e1c9678296237f147466": {
-            "unet_lr": 0.00012,
-            "text_encoder_lr": 6e-05,
+            "unet_lr": 0.00064,
+            "text_encoder_lr": 6.4e-05,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -124,8 +124,8 @@
             ]
         },
         "34a7aae44aeda3ba98eec73d818a4392a6226b9e00c223af02c105bda649268c": {
-            "unet_lr": 0.0001,
-            "text_encoder_lr": 5e-05,
+            "unet_lr": 0.00016354800000000001,
+            "text_encoder_lr": 1.63548e-05,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -165,8 +165,8 @@
             "network_args": []
         },
         "7637327a8414801bf0bb4d6d1b574dd95c05525165ee271cc085b64f89c8cba8": {
-            "unet_lr": 0.00015,
-            "text_encoder_lr": 7.5e-05,
+            "unet_lr": 0.000826,
+            "text_encoder_lr": 8.26e-05,
             "train_batch_size": 5,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -217,12 +217,12 @@
             "network_args": []
         },
         "7d6474f05dc6940ad31182d1359e7f6390dfa92a0cbae20597bfd86d415bd0fd": {
-            "unet_lr": 0.00015,
-            "text_encoder_lr": 7.5e-05,
-            "train_batch_size": 5,
+            "unet_lr": 0.0017100000000000001,
+            "text_encoder_lr": 0.000171,
             "gradient_accumulation_steps": 4,
-            "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "min_snr_gamma": 8,
+            "train_batch_size": 5,
+            "max_train_epochs": 10,
             "network_dim": 64,
             "network_alpha": 64,
             "network_args": [

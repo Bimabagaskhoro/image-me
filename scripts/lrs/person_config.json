@@ -154,12 +154,12 @@
             ]
         },
         "a1fd5a9d0707d1b96b7738c4c48894f95e8ddbaa840d5aa85a3a03671479894c": {
-            "unet_lr": 0.00012,
-            "text_encoder_lr": 6e-05,
+            "unet_lr": 0.03149898839879918,
+            "text_encoder_lr": 0.0008592000000000001,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "max_train_epochs": 10,
             "network_dim": 64,
             "network_alpha": 64,
             "network_args": []

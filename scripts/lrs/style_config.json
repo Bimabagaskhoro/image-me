@@ -5,8 +5,8 @@
     },
     "data": {
         "eb324bfcad14e8f1d46346f46ae7af7d3e58c3babbc1f699ee7c61baab291369": {
-            "unet_lr": 0.0008240000000000001,
-            "text_encoder_lr": 8.240000000000001e-05,
+            "unet_lr": 0.0024070000000000003,
+            "text_encoder_lr": 0.0012035000000000001,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
             "max_train_epochs": 3,
@@ -47,11 +47,11 @@
             ]
         },
         "f0beb2d95bfe25352803339af6c50e45e43f6a36125f42c69e5b8fe8b6e07462": {
-            "unet_lr": 0.000826,
-            "text_encoder_lr": 8.26e-05,
+            "unet_lr": 0.0017350000000000002,
+            "text_encoder_lr": 0.0008675000000000001,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
-            "max_train_epochs": 3,
+            "max_train_epochs": 10,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": [

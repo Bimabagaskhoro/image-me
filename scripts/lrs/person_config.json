@@ -38,8 +38,8 @@
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
         },
         "f0beb2d95bfe25352803339af6c50e45e43f6a36125f42c69e5b8fe8b6e07462": {
-            "unet_lr": 0.0001,
-            "text_encoder_lr": 5e-05,
+            "unet_lr": 0.0017350000000000002,
+            "text_encoder_lr": 0.0008675000000000001,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,

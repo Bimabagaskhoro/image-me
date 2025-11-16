@@ -1,7 +1,17 @@
 {
     "default": {
-        "unet_lr": 0.0001,
-        "text_encoder_lr": 5e-05
+        "unet_lr": 0.0008240000000000001,
+        "text_encoder_lr": 8.240000000000001e-05,
+        "min_snr_gamma": 5,
+        "train_batch_size": 4,
+        "max_train_epochs": 3,
+        "network_dim": 32,
+        "network_alpha": 32,
+        "network_args": [
+            "conv_dim=4",
+            "conv_alpha=4",
+            "dropout=null"
+        ]
     },
     "data": {
         "eb324bfcad14e8f1d46346f46ae7af7d3e58c3babbc1f699ee7c61baab291369": {

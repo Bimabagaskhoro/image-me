@@ -5,7 +5,7 @@
         "train_batch_size": 4,
         "gradient_accumulation_steps" : 4,
         "min_snr_gamma" : 7,
-        "max_train_epochs" : 3,
+        "max_train_epochs": 25,
         "network_dim": 32,
         "network_alpha": 32,
         "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
@@ -17,18 +17,18 @@
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
-            "max_train_epochs" : 3,
+            "max_train_epochs": 25,
             "network_dim": 32,
             "network_alpha": 32,
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
         },
         "b89415872c1864f2a6ccccb34d6744021aa58eec13ab9109d4fa53931156ead4": {
-            "unet_lr": 0.0038,
-            "text_encoder_lr": 0.0019,
+            "unet_lr": 0.0008240000000000001,
+            "text_encoder_lr": 8.240000000000001e-05,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
-            "max_train_epochs" : 10,
+            "max_train_epochs": 25,
             "network_dim": 32,
             "network_alpha": 32,
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
@@ -39,7 +39,7 @@
             "train_batch_size": 5,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
-            "max_train_epochs" : 10,
+            "max_train_epochs": 25,
             "network_dim": 32,
             "network_alpha": 32,
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
@@ -50,7 +50,7 @@
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 10,
+            "max_train_epochs": 25,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": [
@@ -65,7 +65,7 @@
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "max_train_epochs": 25,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": [
@@ -80,7 +80,7 @@
             "train_batch_size": 3,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "max_train_epochs": 25,
             "network_dim": 64,
             "network_alpha": 64,
             "network_args": [
@@ -95,7 +95,7 @@
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "max_train_epochs": 25,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": []
@@ -106,7 +106,7 @@
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "max_train_epochs": 25,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": [
@@ -121,7 +121,7 @@
             "train_batch_size": 5,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "max_train_epochs": 25,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": [
@@ -136,7 +136,7 @@
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "max_train_epochs": 25,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": [
@@ -151,7 +151,7 @@
             "train_batch_size": 3,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "max_train_epochs": 25,
             "network_dim": 64,
             "network_alpha": 64,
             "network_args": [
@@ -166,7 +166,7 @@
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 10,
+            "max_train_epochs": 25,
             "network_dim": 64,
             "network_alpha": 64,
             "network_args": []
@@ -177,7 +177,7 @@
             "train_batch_size": 5,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "max_train_epochs": 25,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": [
@@ -192,7 +192,7 @@
             "train_batch_size": 3,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 3,
+            "max_train_epochs": 25,
             "network_dim": 64,
             "network_alpha": 64,
             "network_args": [
@@ -207,7 +207,7 @@
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
-            "max_train_epochs": 6,
+            "max_train_epochs": 25,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": []
@@ -218,7 +218,7 @@
             "min_snr_gamma": 8,
             "train_batch_size": 5,
             "gradient_accumulation_steps": 4,
-            "max_train_epochs": 5,
+            "max_train_epochs": 25,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": []
@@ -229,7 +229,7 @@
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 8,
             "train_batch_size": 5,
-            "max_train_epochs": 10,
+            "max_train_epochs": 25,
             "network_dim": 64,
             "network_alpha": 64,
             "network_args": [
@@ -244,7 +244,7 @@
             "train_batch_size": 3,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
-            "max_train_epochs" : 3,
+            "max_train_epochs": 25,
             "network_dim": 64,
             "network_alpha": 64,
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
@@ -255,7 +255,7 @@
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
-            "max_train_epochs" : 3,
+            "max_train_epochs": 25,
             "network_dim": 32,
             "network_alpha": 32,
             "network_args": []

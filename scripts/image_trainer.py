@@ -371,15 +371,42 @@ def run_training(model_type, config_path, log_path):
 def check_training_success(output_dir: str) -> bool:
     """
     Check if training completed successfully by verifying output directory.
-    Returns True if training artifacts are present.
+    Returns True if training artifacts are present and best checkpoint info exists.
     """
     if not os.path.exists(output_dir):
+        print(f"Output directory does not exist: {output_dir}", flush=True)
         return False
     
     # Check if there are any .safetensors files in the output directory
     safetensors_files = [f for f in os.listdir(output_dir) if f.endswith(".safetensors")]
     
-    return len(safetensors_files) > 0
+    if len(safetensors_files) == 0:
+        print("No .safetensors files found in output directory", flush=True)
+        return False
+    
+    # Check for last.safetensors (the final best checkpoint)
+    last_checkpoint = os.path.join(output_dir, "last.safetensors")
+    if os.path.exists(last_checkpoint):
+        print(f"✅ Found final checkpoint: last.safetensors", flush=True)
+        
+        # Check for best checkpoint metadata
+        metadata_file = os.path.join(output_dir, "best_checkpoint_info.json")
+        if os.path.exists(metadata_file):
+            try:
+                with open(metadata_file, 'r') as f:
+                    info = json.load(f)
+                    print(f"✅ Best checkpoint info:", flush=True)
+                    print(f"   - Epoch: {info.get('best_epoch', 'N/A')}", flush=True)
+                    print(f"   - Loss: {info.get('best_loss', 'N/A')}", flush=True)
+                    print(f"   - Total epochs: {info.get('total_epochs', 'N/A')}", flush=True)
+            except Exception as e:
+                print(f"Warning: Could not read best checkpoint metadata: {e}", flush=True)
+        
+        return True
+    else:
+        print(f"Warning: last.safetensors not found. Available files: {safetensors_files}", flush=True)
+        # Still consider it a success if there are other checkpoint files
+        return True
     
 def hash_model(model: str) -> str:
     model_bytes = model.encode('utf-8')

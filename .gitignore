@@ -251,3 +251,5 @@ sdxl_style.txt
 sdxl_style2.txt
 scripts/lrs/nonono_person.json
 scripts/lrs/nonono_style.json
+scripts/hasing_name.py
+math_score.py

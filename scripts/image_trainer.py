@@ -424,7 +424,7 @@ async def main():
     parser.add_argument("--expected-repo-name", help="Expected repository name")
     parser.add_argument("--hours-to-complete", type=float, required=True, help="Number of hours to complete the task")
     parser.add_argument("--retries", type=int, default=5, help="Number of retries on OOM error")
-    parser.add_argument("--reg-ratio", type=float, help="Reg ratio to use for training", default=1.020712)
+    parser.add_argument("--reg-ratio", type=float, help="Reg ratio to use for training", default=1.010356)
     args = parser.parse_args()
 
     os.makedirs(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, exist_ok=True)

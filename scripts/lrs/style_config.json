@@ -1,7 +1,7 @@
 {
     "default": {
-        "unet_lr": 0.0008240000000000001,
-        "text_encoder_lr": 8.240000000000001e-05,
+        "unet_lr": 0.012996,
+        "text_encoder_lr": 0.006498,
         "min_snr_gamma": 5,
         "train_batch_size": 4,
         "max_train_epochs": 25,

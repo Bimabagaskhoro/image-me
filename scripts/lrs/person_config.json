@@ -1,7 +1,7 @@
 {
     "default": {
-        "unet_lr": 0.0024070000000000003,
-        "text_encoder_lr": 0.0012035000000000001,
+        "unet_lr": 0.001280064,
+        "text_encoder_lr": 0.0001280064,
         "train_batch_size": 4,
         "gradient_accumulation_steps" : 4,
         "min_snr_gamma" : 7,

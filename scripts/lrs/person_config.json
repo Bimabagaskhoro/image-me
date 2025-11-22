@@ -12,8 +12,8 @@
     },
     "data": {
         "eb324bfcad14e8f1d46346f46ae7af7d3e58c3babbc1f699ee7c61baab291369": {
-            "unet_lr": 0.0024070000000000003,
-            "text_encoder_lr": 0.0012035000000000001,
+            "unet_lr": 0.001053000,
+            "text_encoder_lr": 0.000526500,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
@@ -23,19 +23,19 @@
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
         },
         "b89415872c1864f2a6ccccb34d6744021aa58eec13ab9109d4fa53931156ead4": {
-            "unet_lr": 0.0008240000000000001,
-            "text_encoder_lr": 8.240000000000001e-05,
+            "unet_lr": 0.003199200,
+            "text_encoder_lr": 0.001599600,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
-            "max_train_epochs": 8,
+            "max_train_epochs": 25,
             "network_dim": 32,
             "network_alpha": 32,
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
         },
         "d6d232a2821b3708d356d95aa0b8cd553d54fde4a083d0d32f2718fafc5b134c": {
-            "unet_lr": 0.0008240000000000001,
-            "text_encoder_lr": 8.240000000000001e-05,
+            "unet_lr": 0.0024070000000000003,
+            "text_encoder_lr": 0.0012035000000000001,
             "train_batch_size": 5,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
@@ -45,8 +45,8 @@
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
         },
         "f0beb2d95bfe25352803339af6c50e45e43f6a36125f42c69e5b8fe8b6e07462": {
-            "unet_lr": 0.0017050000000000001,
-            "text_encoder_lr": 0.0008525000000000001,
+            "unet_lr": 0.001538400,
+            "text_encoder_lr": 0.000769200,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -90,8 +90,8 @@
             ]
         },
         "162748f97994bc2ffaafdcfd900e06e245e85a9826fb77aa8568846fb6b3f15d": {
-            "unet_lr": 0.00012,
-            "text_encoder_lr": 6e-05,
+            "unet_lr": 0.003087600,
+            "text_encoder_lr": 0.001543800,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -116,8 +116,8 @@
             ]
         },
         "a51427f9147c3c672edacd0c1070443e50d28df4c6f7d04cd7038fb68f1e8952": {
-            "unet_lr": 0.0013499999999999999,
-            "text_encoder_lr": 0.0006749999999999999,
+            "unet_lr": 0.0013764,
+            "text_encoder_lr": 0.0006882,
             "train_batch_size": 5,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -131,8 +131,8 @@
             ]
         },
         "34a7aae44aeda3ba98eec73d818a4392a6226b9e00c223af02c105bda649268c": {
-            "unet_lr": 0.00016354800000000001,
-            "text_encoder_lr": 1.63548e-05,
+            "unet_lr": 0.000192560,
+            "text_encoder_lr": 0.000096280,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -202,8 +202,8 @@
             ]
         },
         "a39c9825466ea06cd71c5db75963783dba07b2d2a02b9aac21452c3762493c8f": {
-            "unet_lr": 0.0021696,
-            "text_encoder_lr": 0.0010848,
+            "unet_lr": 0.012996,
+            "text_encoder_lr": 0.006498,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -213,8 +213,8 @@
             "network_args": []
         },
         "158598455e814319c65ccbf8bbae049200601b2ac4fb1429fed6158f2f5ac8bd": {
-            "unet_lr": 0.00017100000000000004,
-            "text_encoder_lr": 1.7100000000000002e-05,
+            "unet_lr": 0.0011253,
+            "text_encoder_lr": 0.00056265,
             "min_snr_gamma": 8,
             "train_batch_size": 5,
             "gradient_accumulation_steps": 4,
@@ -255,7 +255,7 @@
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
-            "max_train_epochs": 5,
+            "max_train_epochs": 25,
             "network_dim": 32,
             "network_alpha": 32,
             "network_args": []
@@ -272,8 +272,8 @@
             "network_args": []
         },
         "9177dab379e14f76c500ad2246352fd9387f11e2f57e2973bf9ada4d7cd4c962": {
-            "unet_lr": 0.00372,
-            "text_encoder_lr": 0.00186,
+            "unet_lr": 0.001400178,
+            "text_encoder_lr": 0.000140018,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
@@ -305,8 +305,8 @@
             "network_args": []
         },
         "a74734bd059b67f654909604bbe57cce7802cf41ce7cf269252366c62b2c8bf6": {
-            "unet_lr": 0.00372,
-            "text_encoder_lr": 0.00186,
+            "unet_lr": 0.00006592,
+            "text_encoder_lr": 0.000006592,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
@@ -316,8 +316,8 @@
             "network_args": []
         },
         "c6efeaf411754e65b3e2395640d5f90ac6150a1d82e4b3caf8df566aa406609c": {
-            "unet_lr": 0.00372,
-            "text_encoder_lr": 0.00186,
+            "unet_lr": 0.0021696,
+            "text_encoder_lr": 0.0010848,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
@@ -404,8 +404,19 @@
             "network_args": []
         },
         "70ff32b896771e2c67412f6a8299e0bf831705bb714af7e810c1466de783cdd0": {
-            "unet_lr": 0.00372,
-            "text_encoder_lr": 0.00186,
+            "unet_lr": 0.03149898839879918,
+            "text_encoder_lr": 0.0008592000000000001,
+            "train_batch_size": 4,
+            "gradient_accumulation_steps" : 4,
+            "min_snr_gamma" : 7,
+            "max_train_epochs": 25,
+            "network_dim": 32,
+            "network_alpha": 32,
+            "network_args": []
+        },
+        "00f8fa962a24d797b9a09be9886ec37bfaf613c98a420d303d220040f65b3eed": {
+            "unet_lr": 0.00017100000000000004,
+            "text_encoder_lr": 1.7100000000000002e-05,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,

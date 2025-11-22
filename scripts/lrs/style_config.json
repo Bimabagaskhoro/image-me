@@ -33,7 +33,7 @@
             "text_encoder_lr": 8.240000000000001e-05,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
-            "max_train_epochs": 8,
+            "max_train_epochs": 25,
             "network_dim": 32,
             "network_alpha": 32,
             "network_args": [
@@ -155,8 +155,8 @@
             ]
         },
         "6042ce99f9cde5c1a8acfc32dd1b3ba7ac4523aba281c1d9295e1a6d7b98a8e7": {
-            "unet_lr": 0.000826,
-            "text_encoder_lr": 8.26e-05,
+            "unet_lr": 0.0004532,
+            "text_encoder_lr": 0.00004532,
             "min_snr_gamma": 5,
             "train_batch_size": 3,
             "max_train_epochs": 25,
@@ -169,8 +169,8 @@
             ]
         },
         "a1fd5a9d0707d1b96b7738c4c48894f95e8ddbaa840d5aa85a3a03671479894c": {
-            "unet_lr": 0.03149898839879918,
-            "text_encoder_lr": 0.0008592000000000001,
+            "unet_lr": 0.00016354800000000001,
+            "text_encoder_lr": 1.63548e-05,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
             "max_train_epochs": 25,
@@ -271,7 +271,7 @@
             "text_encoder_lr": 8.240000000000001e-05,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
-            "max_train_epochs": 5,
+            "max_train_epochs": 25,
             "network_alpha": 32,
             "network_dim": 32,
             "network_args": [
@@ -281,8 +281,8 @@
             ]
         },
         "2ed92e4825a66485b34e0ab64877228dc92628a0ecb10646b761c07570eff91f": {
-            "unet_lr": 0.0008240000000000001,
-            "text_encoder_lr": 8.240000000000001e-05,
+            "unet_lr": 0.000940500,
+            "text_encoder_lr": 9.405000000000001e-05,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
             "max_train_epochs": 25,
@@ -295,8 +295,8 @@
             ]
         },
         "9177dab379e14f76c500ad2246352fd9387f11e2f57e2973bf9ada4d7cd4c962": {
-            "unet_lr": 0.0008240000000000001,
-            "text_encoder_lr": 8.240000000000001e-05,
+            "unet_lr": 0.00064,
+            "text_encoder_lr": 6.4e-05,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
             "max_train_epochs": 25,
@@ -309,8 +309,8 @@
             ]
         },
         "f04d4cd944ff8ff03dda0ad75ae479cde3402e6eb2ac9ebd1b170b59f59b21ac": {
-            "unet_lr": 0.0008240000000000001,
-            "text_encoder_lr": 8.240000000000001e-05,
+            "unet_lr": 0.00114536,
+            "text_encoder_lr": 0.000114536,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
             "max_train_epochs": 25,
@@ -351,8 +351,8 @@
             ]
         },
         "c6efeaf411754e65b3e2395640d5f90ac6150a1d82e4b3caf8df566aa406609c": {
-            "unet_lr": 0.0008240000000000001,
-            "text_encoder_lr": 8.240000000000001e-05,
+            "unet_lr": 0.001280064,
+            "text_encoder_lr": 0.0001280064,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
             "max_train_epochs": 25,
@@ -435,8 +435,8 @@
             ]
         },
         "2f2560699519e9904840f4279c6e76e8573819da773ec4b0c6a689e606508be3": {
-            "unet_lr": 0.0008240000000000001,
-            "text_encoder_lr": 8.240000000000001e-05,
+            "unet_lr": 5.7820000000000005e-05,
+            "text_encoder_lr": 5.782000000000001e-06,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
             "max_train_epochs": 25,

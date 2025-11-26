@@ -1,7 +1,8 @@
 {
     "default": {
-        "unet_lr": 0.0001,
-        "text_encoder_lr": 5e-05
+        "unet_lr": 0.00005,
+        "text_encoder_lr": [ 0.000005, 0.000005],
+        "max_train_steps": 250
     },
     "data": {
         "ad7785f9ff51db0c7e07277f5f3cc474217158f242cc44a58581f56f28017c7d": {

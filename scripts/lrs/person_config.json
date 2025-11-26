@@ -12,8 +12,8 @@
     },
     "data": {
         "eb324bfcad14e8f1d46346f46ae7af7d3e58c3babbc1f699ee7c61baab291369": {
-            "unet_lr": 0.001053000,
-            "text_encoder_lr": 0.000526500,
+            "unet_lr": 0.001053,
+            "text_encoder_lr": 0.0005265,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
@@ -23,7 +23,7 @@
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
         },
         "b89415872c1864f2a6ccccb34d6744021aa58eec13ab9109d4fa53931156ead4": {
-            "unet_lr": 0.003199200,
+            "unet_lr": 0.0031992,
             "text_encoder_lr": 0.001599600,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
@@ -45,8 +45,8 @@
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
         },
         "f0beb2d95bfe25352803339af6c50e45e43f6a36125f42c69e5b8fe8b6e07462": {
-            "unet_lr": 0.001538400,
-            "text_encoder_lr": 0.000769200,
+            "unet_lr": 0.0015384,
+            "text_encoder_lr": 0.0007692,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -90,8 +90,8 @@
             ]
         },
         "162748f97994bc2ffaafdcfd900e06e245e85a9826fb77aa8568846fb6b3f15d": {
-            "unet_lr": 0.003087600,
-            "text_encoder_lr": 0.001543800,
+            "unet_lr": 0.0030876000000000002,
+            "text_encoder_lr": 0.0015438000000000001,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -239,8 +239,8 @@
             ]
         },
         "0b7169dc27a95818a024b479271167dd8bb221ee1cebf58a683378927eb447c3": {
-            "unet_lr": 8e-05,
-            "text_encoder_lr": 4e-05,
+            "unet_lr": 0.0034609400000000005,
+            "text_encoder_lr": 0.000346094,
             "train_batch_size": 3,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
@@ -272,8 +272,8 @@
             "network_args": []
         },
         "9177dab379e14f76c500ad2246352fd9387f11e2f57e2973bf9ada4d7cd4c962": {
-            "unet_lr": 0.001400178,
-            "text_encoder_lr": 0.000140018,
+            "unet_lr": 0.00064,
+            "text_encoder_lr": 6.4e-05,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
@@ -294,8 +294,8 @@
             "network_args": []
         },
         "e4308bdead0e824ea25e37c6caf771f231428975d33316496452c56a34757409": {
-            "unet_lr": 0.00372,
-            "text_encoder_lr": 0.00186,
+            "unet_lr": 7.44e-05,
+            "text_encoder_lr": 3.72e-05,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,
@@ -415,8 +415,8 @@
             "network_args": []
         },
         "00f8fa962a24d797b9a09be9886ec37bfaf613c98a420d303d220040f65b3eed": {
-            "unet_lr": 0.00017100000000000004,
-            "text_encoder_lr": 1.7100000000000002e-05,
+            "unet_lr": 0.0028499999999999997,
+            "text_encoder_lr": 0.0014249999999999998,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,

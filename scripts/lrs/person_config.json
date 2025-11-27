@@ -161,8 +161,8 @@
             ]
         },
         "a1fd5a9d0707d1b96b7738c4c48894f95e8ddbaa840d5aa85a3a03671479894c": {
-            "unet_lr": 0.03149898839879918,
-            "text_encoder_lr": 0.0008592000000000001,
+            "unet_lr": 0.000462144,
+            "text_encoder_lr": 0.000231072,
             "train_batch_size": 4,
             "gradient_accumulation_steps": 4,
             "min_snr_gamma": 7,
@@ -371,8 +371,8 @@
             "network_args": []
         },
         "ad7785f9ff51db0c7e07277f5f3cc474217158f242cc44a58581f56f28017c7d": {
-            "unet_lr": 0.00372,
-            "text_encoder_lr": 0.00186,
+            "unet_lr": 0.0022692000000000003,
+            "text_encoder_lr": 0.0011346000000000001,
             "train_batch_size": 4,
             "gradient_accumulation_steps" : 4,
             "min_snr_gamma" : 7,

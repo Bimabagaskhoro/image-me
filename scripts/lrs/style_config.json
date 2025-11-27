@@ -239,8 +239,8 @@
             ]
         },
         "7d6474f05dc6940ad31182d1359e7f6390dfa92a0cbae20597bfd86d415bd0fd": {
-            "unet_lr": 0.0017100000000000001,
-            "text_encoder_lr": 0.000171,
+            "unet_lr": 1.652e-05,
+            "text_encoder_lr": 1.652e-06,
             "min_snr_gamma": 8,
             "train_batch_size": 5,
             "max_train_epochs": 25,
@@ -281,8 +281,8 @@
             ]
         },
         "2ed92e4825a66485b34e0ab64877228dc92628a0ecb10646b761c07570eff91f": {
-            "unet_lr": 0.000940500,
-            "text_encoder_lr": 9.405000000000001e-05,
+            "unet_lr": 0.0132525,
+            "text_encoder_lr": 0.00132525,
             "min_snr_gamma": 5,
             "train_batch_size": 4,
             "max_train_epochs": 25,

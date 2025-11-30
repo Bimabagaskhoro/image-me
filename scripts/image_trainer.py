@@ -27,7 +27,6 @@ import trainer.utils.training_paths as train_paths
 from core.config.config_handler import save_config_toml
 from core.dataset.prepare_diffusion_dataset import prepare_dataset
 from core.models.utility_models import ImageModelType
-from core.blora_helper import BLoRAConfig, TrainingType, analyze_training_requirements
 
 
 def get_model_path(path: str) -> str:
@@ -36,35 +35,32 @@ def get_model_path(path: str) -> str:
         if len(files) == 1 and files[0].endswith(".safetensors"):
             return os.path.join(path, files[0])
     return path
+def merge_model_config(default_config: dict, model_config: dict) -> dict:
+    """Merge default config with model-specific overrides."""
+    merged = {}
 
+    if isinstance(default_config, dict):
+        merged.update(default_config)
 
-def count_images_in_directory(directory_path: str) -> int:
-    """Count the number of image files in a directory"""
-    image_extensions = {'.jpg', '.jpeg', '.png', '.webp', '.bmp', '.gif'}
-    count = 0
-    
-    try:
-        if not os.path.exists(directory_path):
-            print(f"Directory not found: {directory_path}", flush=True)
-            return 0
-        
-        # Walk through all subdirectories
-        for root, dirs, files in os.walk(directory_path):
-            for file in files:
-                # Skip hidden files
-                if file.startswith('.'):
-                    continue
-                
-                # Check if file has an image extension
-                _, ext = os.path.splitext(file.lower())
-                if ext in image_extensions:
-                    count += 1
-    except Exception as e:
-        print(f"Error counting images in directory: {e}", flush=True)
-        return 0
-    
-    return count
+    if isinstance(model_config, dict):
+        merged.update(model_config)
 
+    return merged if merged else None
+def get_config_for_model(lrs_config: dict, model_name: str) -> dict:
+    """Get configuration overrides based on model name."""
+    if not isinstance(lrs_config, dict):
+        return None
+
+    data = lrs_config.get("data")
+    default_config = lrs_config.get("default", {})
+
+    if isinstance(data, dict) and model_name in data:
+        return merge_model_config(default_config, data.get(model_name))
+
+    if default_config:
+        return default_config
+
+    return None
 
 def load_lrs_config(model_type: str, is_style: bool) -> dict:
     """Load the appropriate LRS configuration based on model type and training type"""
@@ -86,118 +82,7 @@ def load_lrs_config(model_type: str, is_style: bool) -> dict:
         return None
 
 
-def merge_model_config(default_config: dict, model_config: dict) -> dict:
-    """Merge default config with model-specific overrides."""
-    merged = {}
-
-    if isinstance(default_config, dict):
-        merged.update(default_config)
-
-    if isinstance(model_config, dict):
-        merged.update(model_config)
-
-    return merged if merged else None
-
-
-def get_config_for_model(lrs_config: dict, model_name: str) -> dict:
-    """Get configuration overrides based on model name."""
-    if not isinstance(lrs_config, dict):
-        return None
-
-    data = lrs_config.get("data")
-    default_config = lrs_config.get("default", {})
-
-    if isinstance(data, dict) and model_name in data:
-        return merge_model_config(default_config, data.get(model_name))
-
-    if default_config:
-        return default_config
-
-    return None
-
-
-def apply_reg_ratio_to_lr(value, reg_ratio: float):
-    """
-    Scale learning-rate values (single value or list/tuple of values) by reg_ratio.
-    Leaves non-numeric values unchanged.
-    """
-    if value is None:
-        return None
-
-    def _scale(v):
-        if isinstance(v, (int, float)):
-            return v * reg_ratio
-        if isinstance(v, str):
-            try:
-                return float(v) * reg_ratio
-            except ValueError:
-                return v
-        return v
-
-    if isinstance(value, (list, tuple)):
-        return [_scale(v) for v in value]
-
-    return _scale(value)
-
-
-OOM_ERROR = "torch.OutOfMemoryError: CUDA out of memory"
-OOM_ERROR_ALT = "OutOfMemoryError"
-
-
-def get_error_type(log_path: str):
-    """Check if log file contains OOM error"""
-    if not os.path.exists(log_path):
-        return None
-    
-    with open(log_path, "r") as f:
-        text = f.read()
-    
-    if OOM_ERROR in text or OOM_ERROR_ALT in text:
-        return OOM_ERROR
-    
-    return None
-
-
-def reduce_batch_size_in_config(config: dict, reduction_factor: int = 2) -> bool:
-    """
-    Reduce batch size in config dictionary.
-    Returns True if reduction was successful, False if batch size is already at minimum.
-    """
-    current_batch_size = config.get("train_batch_size")
-    current_max_data_loader_n_workers = config.get("max_data_loader_n_workers")
-
-    if current_batch_size > 1:
-        new_batch_size = max(1, current_batch_size // reduction_factor)
-        config["train_batch_size"] = new_batch_size
-        print(f"Reducing batch size from {current_batch_size} to {new_batch_size}", flush=True)
-        return True
-    elif current_max_data_loader_n_workers > 1:
-        new_max_data_loader_n_workers = max(1, current_max_data_loader_n_workers // reduction_factor)
-        config["max_data_loader_n_workers"] = new_max_data_loader_n_workers
-        print(f"Reducing gradient accumulation steps from {current_max_data_loader_n_workers} to {new_gradient_accumulation_steps}", flush=True)
-        return True
-    else:
-        print(f"Batch size is already 1, cannot reduce further", flush=True)
-        return False
-
-
-def reduce_gradient_accumulation_in_config(config: dict) -> bool:
-    """
-    Reduce gradient accumulation steps in config dictionary.
-    Returns True if reduction was successful, False if already at minimum.
-    """
-    current_grad_accum = config.get("gradient_accumulation_steps", 1)
-    
-    if current_grad_accum > 1:
-        new_grad_accum = max(1, current_grad_accum // 2)
-        config["gradient_accumulation_steps"] = new_grad_accum
-        print(f"Reducing gradient accumulation steps from {current_grad_accum} to {new_grad_accum}", flush=True)
-        return True
-    else:
-        print(f"Gradient accumulation is already 1, cannot reduce further", flush=True)
-        return False
-
-def create_config(task_id, model_path, model_name, model_type, expected_repo_name, reg_ratio=1.0):
+def create_config(task_id, model_path, model_name, model_type, expected_repo_name):
     """Get the training data directory"""
     train_data_dir = train_paths.get_image_training_images_dir(task_id)
 
@@ -207,40 +92,17 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
     with open(config_template_path, "r") as file:
         config = toml.load(file)
 
-    normalized_model_type = (model_type or "").lower()
-    
-    # Load and apply LRS configuration
     lrs_config = load_lrs_config(model_type, is_style)
     if lrs_config:
         model_hash = hash_model(model_name)
         lrs_settings = get_config_for_model(lrs_config, model_hash)
 
         if lrs_settings:
-            base_unet_lr = lrs_settings.get('unet_lr')
-            base_text_encoder_lr = lrs_settings.get('text_encoder_lr')
 
-            final_unet_lr = base_unet_lr * reg_ratio if base_unet_lr else None
-            final_text_encoder_lr = apply_reg_ratio_to_lr(base_text_encoder_lr, reg_ratio)
-
-            print(f"Applying LRS configuration for model '{model_name}' (hash: {model_hash}):", flush=True)
-            print(f"  - Base unet_lr: {base_unet_lr} × reg_ratio: {reg_ratio} = {final_unet_lr}", flush=True)
-            print(f"  - Base text_encoder_lr: {base_text_encoder_lr} × reg_ratio: {reg_ratio} = {final_text_encoder_lr}", flush=True)
-            print(f"  - train_batch_size: {lrs_settings.get('train_batch_size')}", flush=True)
-            print(f"  - gradient_accumulation_steps: {lrs_settings.get('gradient_accumulation_steps')}", flush=True)
-            print(f"  - min_snr_gamma: {lrs_settings.get('min_snr_gamma')}", flush=True)
-            print(f"  - lr_warmup_steps: {lrs_settings.get('lr_warmup_steps')}", flush=True)
-            print(f"  - max_grad_norm: {lrs_settings.get('max_grad_norm')}", flush=True)
-            print(f"  - max_train_epochs: {lrs_settings.get('max_train_epochs')}", flush=True)
-            print(f"  - network_alpha: {lrs_settings.get('network_alpha')}", flush=True)
-            print(f"  - network_dim: {lrs_settings.get('network_dim')}", flush=True)
-            print(f"  - network_args: {lrs_settings.get('network_args')}", flush=True)
-            print(f"  - max_train_steps: {lrs_settings.get('max_train_steps')}", flush=True)
-
-
-            if final_unet_lr is not None:
-                config['unet_lr'] = final_unet_lr
-            if final_text_encoder_lr is not None:
-                config['text_encoder_lr'] = final_text_encoder_lr
+            if lrs_settings.get('unet_lr') is not None:
+                config['unet_lr'] = lrs_settings.get('unet_lr')
+            if lrs_settings.get('text_encoder_lr') is not None:
+                config['text_encoder_lr'] = lrs_settings.get('text_encoder_lr')
             if lrs_settings.get('train_batch_size') is not None:
                 config['train_batch_size'] = lrs_settings.get('train_batch_size')
             if lrs_settings.get('gradient_accumulation_steps') is not None:
@@ -253,12 +115,6 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
                 config['max_grad_norm'] = lrs_settings.get('max_grad_norm')
             if lrs_settings.get('max_train_epochs') is not None:
                 config['max_train_epochs'] = lrs_settings.get('max_train_epochs')
-            if lrs_settings.get('network_alpha') is not None:
-                config['network_alpha'] = lrs_settings.get('network_alpha')
-            if lrs_settings.get('network_dim') is not None:
-                config['network_dim'] = lrs_settings.get('network_dim')
-            if lrs_settings.get('network_args') is not None:
-                config['network_args'] = lrs_settings.get('network_args')
             if lrs_settings.get('max_train_steps') is not None:
                 config['max_train_steps'] = lrs_settings.get('max_train_steps')
 
@@ -280,12 +136,120 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
     else:
         print("Warning: Could not load LRS configuration, using default values", flush=True)
 
+    # Update config
+    network_config_person = {
+        "stabilityai/stable-diffusion-xl-base-1.0": 235,
+        "Lykon/dreamshaper-xl-1-0": 235,
+        "Lykon/art-diffusion-xl-0.9": 235,
+        "SG161222/RealVisXL_V4.0": 467,
+        "stablediffusionapi/protovision-xl-v6.6": 235,
+        "stablediffusionapi/omnium-sdxl": 235,
+        "GraydientPlatformAPI/realism-engine2-xl": 235,
+        "GraydientPlatformAPI/albedobase2-xl": 467,
+        "KBlueLeaf/Kohaku-XL-Zeta": 235,
+        "John6666/hassaku-xl-illustrious-v10style-sdxl": 228,
+        "John6666/nova-anime-xl-pony-v5-sdxl": 235,
+        "cagliostrolab/animagine-xl-4.0": 699,
+        "dataautogpt3/CALAMITY": 235,
+        "dataautogpt3/ProteusSigma": 235,
+        "dataautogpt3/ProteusV0.5": 467,
+        "dataautogpt3/TempestV0.1": 456,
+        "ehristoforu/Visionix-alpha": 235,
+        "femboysLover/RealisticStockPhoto-fp16": 467,
+        "fluently/Fluently-XL-Final": 228,
+        "mann-e/Mann-E_Dreams": 456,
+        "misri/leosamsHelloworldXL_helloworldXL70": 235,
+        "misri/zavychromaxl_v90": 235,
+        "openart-custom/DynaVisionXL": 228,
+        "recoilme/colorfulxl": 228,
+        "zenless-lab/sdxl-aam-xl-anime-mix": 456,
+        "zenless-lab/sdxl-anima-pencil-xl-v5": 228,
+        "zenless-lab/sdxl-anything-xl": 228,
+        "zenless-lab/sdxl-blue-pencil-xl-v7": 467,
+        "Corcelio/mobius": 228,
+        "GHArt/Lah_Mysterious_SDXL_V4.0_xl_fp16": 235,
+        "OnomaAIResearch/Illustrious-xl-early-release-v0": 228
+    }
+
+    network_config_style = {
+        "stabilityai/stable-diffusion-xl-base-1.0": 235,
+        "Lykon/dreamshaper-xl-1-0": 235,
+        "Lykon/art-diffusion-xl-0.9": 235,
+        "SG161222/RealVisXL_V4.0": 235,
+        "stablediffusionapi/protovision-xl-v6.6": 235,
+        "stablediffusionapi/omnium-sdxl": 235,
+        "GraydientPlatformAPI/realism-engine2-xl": 235,
+        "GraydientPlatformAPI/albedobase2-xl": 235,
+        "KBlueLeaf/Kohaku-XL-Zeta": 235,
+        "John6666/hassaku-xl-illustrious-v10style-sdxl": 235,
+        "John6666/nova-anime-xl-pony-v5-sdxl": 235,
+        "cagliostrolab/animagine-xl-4.0": 235,
+        "dataautogpt3/CALAMITY": 235,
+        "dataautogpt3/ProteusSigma": 235,
+        "dataautogpt3/ProteusV0.5": 235,
+        "dataautogpt3/TempestV0.1": 228,
+        "ehristoforu/Visionix-alpha": 235,
+        "femboysLover/RealisticStockPhoto-fp16": 235,
+        "fluently/Fluently-XL-Final": 235,
+        "mann-e/Mann-E_Dreams": 235,
+        "misri/leosamsHelloworldXL_helloworldXL70": 235,
+        "misri/zavychromaxl_v90": 235,
+        "openart-custom/DynaVisionXL": 235,
+        "recoilme/colorfulxl": 235,
+        "zenless-lab/sdxl-aam-xl-anime-mix": 235,
+        "zenless-lab/sdxl-anima-pencil-xl-v5": 235,
+        "zenless-lab/sdxl-anything-xl": 235,
+        "zenless-lab/sdxl-blue-pencil-xl-v7": 235,
+        "Corcelio/mobius": 235,
+        "GHArt/Lah_Mysterious_SDXL_V4.0_xl_fp16": 235,
+        "OnomaAIResearch/Illustrious-xl-early-release-v0": 235
+    }
+
+    config_mapping = {
+        228: {
+            "network_dim": 32,
+            "network_alpha": 32,
+            "network_args": []
+        },
+        235: {
+            "network_dim": 32,
+            "network_alpha": 32,
+            "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
+        },
+        456: {
+            "network_dim": 64,
+            "network_alpha": 64,
+            "network_args": []
+        },
+        467: {
+            "network_dim": 64,
+            "network_alpha": 64,
+            "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
+        },
+        699: {
+            "network_dim": 96,
+            "network_alpha": 96,
+            "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
+        },
+    }
+
     config["pretrained_model_name_or_path"] = model_path
     config["train_data_dir"] = train_data_dir
     output_dir = train_paths.get_checkpoints_output_path(task_id, expected_repo_name)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
     config["output_dir"] = output_dir
+
+    if model_type == "sdxl":
+        if is_style:
+            network_config = config_mapping[network_config_style[model_name]]
+        else:
+            network_config = config_mapping[network_config_person[model_name]]
+
+        config["network_dim"] = network_config["network_dim"]
+        config["network_alpha"] = network_config["network_alpha"]
+        config["network_args"] = network_config["network_args"]
+
 
     # Save config to file
     config_path = os.path.join(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, f"{task_id}.toml")
@@ -294,11 +258,7 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
     return config_path
 
 
-def run_training(model_type, config_path, log_path):
-    """
-    Run training subprocess and log output.
-    Returns True if training completed successfully, False otherwise.
-    """
+def run_training(model_type, config_path):
     print(f"Starting training with config: {config_path}", flush=True)
 
     if model_type == "sdxl":
@@ -328,86 +288,29 @@ def run_training(model_type, config_path, log_path):
 
     try:
         print("Starting training subprocess...\n", flush=True)
-        
-        with open(log_path, "w") as log_file:
-            log_file.write(f"Training command: {' '.join(training_command)}\n")
-            log_file.write("=" * 80 + "\n")
-            log_file.flush()
-            
-            process = subprocess.Popen(
-                training_command,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                bufsize=1
-            )
+        process = subprocess.Popen(
+            training_command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
 
-            # Stream output to both console and log file
-            for line in process.stdout:
-                print(line, end="", flush=True)
-                log_file.write(line)
-                log_file.flush()
+        for line in process.stdout:
+            print(line, end="", flush=True)
 
-            return_code = process.wait()
-            
-            log_file.write(f"\nProcess completed with return code: {return_code}\n")
-            log_file.flush()
-            
-            if return_code != 0:
-                print("Training subprocess failed!", flush=True)
-                print(f"Exit Code: {return_code}", flush=True)
-                return False
+        return_code = process.wait()
+        if return_code != 0:
+            raise subprocess.CalledProcessError(return_code, training_command)
 
         print("Training subprocess completed successfully.", flush=True)
-        return True
 
-    except Exception as e:
-        print(f"Training subprocess encountered an error: {e}", flush=True)
-        with open(log_path, "a") as log_file:
-            log_file.write(f"\nException occurred: {str(e)}\n")
-        return False
+    except subprocess.CalledProcessError as e:
+        print("Training subprocess failed!", flush=True)
+        print(f"Exit Code: {e.returncode}", flush=True)
+        print(f"Command: {' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd}", flush=True)
+        raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
 
-
-def check_training_success(output_dir: str) -> bool:
-    """
-    Check if training completed successfully by verifying output directory.
-    Returns True if training artifacts are present and best checkpoint info exists.
-    """
-    if not os.path.exists(output_dir):
-        print(f"Output directory does not exist: {output_dir}", flush=True)
-        return False
-    
-    # Check if there are any .safetensors files in the output directory
-    safetensors_files = [f for f in os.listdir(output_dir) if f.endswith(".safetensors")]
-    
-    if len(safetensors_files) == 0:
-        print("No .safetensors files found in output directory", flush=True)
-        return False
-    
-    # Check for last.safetensors (the final best checkpoint)
-    last_checkpoint = os.path.join(output_dir, "last.safetensors")
-    if os.path.exists(last_checkpoint):
-        print(f"✅ Found final checkpoint: last.safetensors", flush=True)
-        
-        # Check for best checkpoint metadata
-        metadata_file = os.path.join(output_dir, "best_checkpoint_info.json")
-        if os.path.exists(metadata_file):
-            try:
-                with open(metadata_file, 'r') as f:
-                    info = json.load(f)
-                    print(f"✅ Best checkpoint info:", flush=True)
-                    print(f"   - Epoch: {info.get('best_epoch', 'N/A')}", flush=True)
-                    print(f"   - Loss: {info.get('best_loss', 'N/A')}", flush=True)
-                    print(f"   - Total epochs: {info.get('total_epochs', 'N/A')}", flush=True)
-            except Exception as e:
-                print(f"Warning: Could not read best checkpoint metadata: {e}", flush=True)
-        
-        return True
-    else:
-        print(f"Warning: last.safetensors not found. Available files: {safetensors_files}", flush=True)
-        # Still consider it a success if there are other checkpoint files
-        return True
-    
 def hash_model(model: str) -> str:
     model_bytes = model.encode('utf-8')
     hashed = hashlib.sha256(model_bytes).hexdigest()
@@ -423,21 +326,12 @@ async def main():
     parser.add_argument("--model-type", required=True, choices=["sdxl", "flux"], help="Model type")
     parser.add_argument("--expected-repo-name", help="Expected repository name")
     parser.add_argument("--hours-to-complete", type=float, required=True, help="Number of hours to complete the task")
-    parser.add_argument("--retries", type=int, default=5, help="Number of retries on OOM error")
-    parser.add_argument("--reg-ratio", type=float, help="Reg ratio to use for training", default=0.917233)
     args = parser.parse_args()
 
     os.makedirs(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, exist_ok=True)
     os.makedirs(train_cst.IMAGE_CONTAINER_IMAGES_PATH, exist_ok=True)
 
     model_path = train_paths.get_image_base_model_path(args.model)
-    output_dir = train_paths.get_checkpoints_output_path(args.task_id, args.expected_repo_name)
-    reg_ratio = args.reg_ratio
-    
-    # Create logs directory
-    logs_dir = os.path.join(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, "logs")
-    os.makedirs(logs_dir, exist_ok=True)
-    log_path = os.path.join(logs_dir, f"train_{args.task_id}.log")
 
     # Prepare dataset
     print("Preparing dataset...", flush=True)
@@ -451,87 +345,17 @@ async def main():
         output_dir=train_cst.IMAGE_CONTAINER_IMAGES_PATH
     )
 
-    # Create initial config file (will count images and apply LRS config)
+    # Create config file
     config_path = create_config(
         args.task_id,
         model_path,
         args.model,
         args.model_type,
         args.expected_repo_name,
-        reg_ratio,
     )
 
-    # Load the config for potential modifications
-    with open(config_path, "r") as f:
-        config = toml.load(f)
-
-    # Training loop with retry logic for OOM errors
-    train_success = False
-    for attempt in range(args.retries):
-        print(f"\n{'='*80}", flush=True)
-        print(f"Training attempt {attempt + 1}/{args.retries} for task {args.task_id}", flush=True)
-        print(f"{'='*80}\n", flush=True)
-
-        # If this is a retry (not the first attempt), handle OOM error
-        if attempt > 0:
-            error_type = get_error_type(log_path)
-            
-            if error_type == OOM_ERROR:
-                print(f"Detected OOM error on attempt {attempt}. Applying memory optimizations...", flush=True)
-                
-                optimization_applied = False
-                
-                # Strategy 1: Reduce batch size (works for both SDXL and Flux)
-                if reduce_batch_size_in_config(config):
-                    optimization_applied = True
-                # Strategy 2: Reduce gradient accumulation (for Flux mainly)
-                elif args.model_type == "flux" and reduce_gradient_accumulation_in_config(config):
-                    optimization_applied = True
-                
-                if not optimization_applied:
-                    print("All memory optimization strategies exhausted. Cannot proceed.", flush=True)
-                    break
-                
-                # Save updated config and retry training
-                save_config_toml(config, config_path)
-                print(f"Updated config saved to {config_path}", flush=True)
-                print(f"Will retry training with optimized settings...", flush=True)
-            else:
-                print(f"Training failed on attempt {attempt} but no OOM error detected. Retrying...", flush=True)
-        
-        # Clear/reset log file
-        with open(log_path, "w") as f:
-            f.write(f"STARTING TRAINING - Attempt {attempt + 1}/{args.retries}\n")
-            f.write(f"Config: {config_path}\n")
-            f.write("=" * 80 + "\n")
-
-        # Run training
-        success = run_training(args.model_type, config_path, log_path)
-        
-        # Wait a bit before checking results
-        time.sleep(3)
-        
-        # Check if training was successful
-        if success and check_training_success(output_dir):
-            print(f"\nTraining completed successfully for task {args.task_id}!", flush=True)
-            train_success = True
-            break
-        else:
-            print(f"\nTraining attempt {attempt + 1} failed or produced no output.", flush=True)
-            if attempt < args.retries - 1:
-                print(f"Retrying...\n", flush=True)
-                time.sleep(2)
-    
-    if not train_success:
-        print(f"\n{'='*80}", flush=True)
-        print(f"Training failed for task {args.task_id} after {args.retries} attempts", flush=True)
-        print(f"{'='*80}\n", flush=True)
-        raise RuntimeError(f"Training failed after {args.retries} attempts")
-    
-    print(f"\n{'='*80}", flush=True)
-    print(f"Training pipeline completed successfully for task {args.task_id}", flush=True)
-    print(f"Output saved to: {output_dir}", flush=True)
-    print(f"{'='*80}\n", flush=True)
+    # Run training
+    run_training(args.model_type, config_path)
 
 
 if __name__ == "__main__":

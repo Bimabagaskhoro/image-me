@@ -45,7 +45,6 @@ from library.custom_train_functions import (
     apply_masked_loss,
 )
 from library.utils import setup_logging, add_logging_arguments
-from library.best_checkpoint_tracker import BestCheckpointTracker
 
 setup_logging()
 import logging
@@ -1287,17 +1286,6 @@ class NetworkTrainer:
         loss_recorder = train_util.LossRecorder()
         val_step_loss_recorder = train_util.LossRecorder()
         val_epoch_loss_recorder = train_util.LossRecorder()
-        
-        # Initialize best checkpoint tracker
-        best_checkpoint_tracker = None
-        if args.save_every_n_epochs is not None and is_main_process:
-            output_name = train_util.default_if_none(args.output_name, train_util.DEFAULT_LAST_OUTPUT_NAME)
-            best_checkpoint_tracker = BestCheckpointTracker(
-                output_dir=args.output_dir,
-                output_name=output_name,
-                save_metadata=True
-            )
-            logger.info(f"Best checkpoint tracking enabled. Final checkpoint will be saved as: {output_name}.safetensors")
 
         del train_dataset_group
         if val_dataset_group is not None:
@@ -1708,22 +1696,8 @@ class NetworkTrainer:
             if args.save_every_n_epochs is not None:
                 saving = (epoch + 1) % args.save_every_n_epochs == 0 and (epoch + 1) < num_train_epochs
                 if is_main_process and saving:
-                    # Get epoch loss for tracking
-                    epoch_loss = loss_recorder.moving_average
-                    
-                    # Save checkpoint
                     ckpt_name = train_util.get_epoch_ckpt_name(args, "." + args.save_model_as, epoch + 1)
                     save_model(ckpt_name, accelerator.unwrap_model(network), global_step, epoch + 1)
-                    
-                    # Track best checkpoint
-                    if best_checkpoint_tracker is not None:
-                        checkpoint_path = os.path.join(args.output_dir, ckpt_name)
-                        is_best = best_checkpoint_tracker.update(
-                            epoch=epoch + 1,
-                            loss=epoch_loss,
-                            checkpoint_path=checkpoint_path,
-                            global_step=global_step
-                        )
 
                     remove_epoch_no = train_util.get_remove_epoch_no(args, epoch + 1)
                     if remove_epoch_no is not None:
@@ -1752,19 +1726,8 @@ class NetworkTrainer:
             train_util.save_state_on_train_end(args, accelerator)
 
         if is_main_process:
-            # Save best checkpoint as final output
-            if best_checkpoint_tracker is not None and best_checkpoint_tracker.has_best_checkpoint():
-                logger.info("Saving best checkpoint as final model...")
-                best_checkpoint_tracker.save_best_as_final()
-                best_info = best_checkpoint_tracker.get_best_info()
-                logger.info(
-                    f"Best checkpoint: epoch {best_info['best_epoch']} "
-                    f"with loss {best_info['best_loss']:.6f}"
-                )
-            else:
-                # Fallback to regular save if no best checkpoint tracked
-                ckpt_name = train_util.get_last_ckpt_name(args, "." + args.save_model_as)
-                save_model(ckpt_name, network, global_step, num_train_epochs, force_sync_upload=True)
+            ckpt_name = train_util.get_last_ckpt_name(args, "." + args.save_model_as)
+            save_model(ckpt_name, network, global_step, num_train_epochs, force_sync_upload=True)
 
             logger.info("model saved.")
 

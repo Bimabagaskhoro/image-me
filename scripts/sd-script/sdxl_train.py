@@ -44,7 +44,6 @@ from library.custom_train_functions import (
     apply_masked_loss,
 )
 from library.sdxl_original_unet import SdxlUNet2DConditionModel
-from library.best_checkpoint_tracker import BestCheckpointTracker
 
 
 UNET_NUM_BLOCKS_FOR_BLOCK_LR = 23
@@ -624,18 +623,6 @@ def train(args):
         accelerator.log({}, step=0)
 
     loss_recorder = train_util.LossRecorder()
-    
-    # Initialize best checkpoint tracker
-    best_checkpoint_tracker = None
-    if args.save_every_n_epochs is not None and is_main_process:
-        output_name = train_util.default_if_none(args.output_name, train_util.DEFAULT_LAST_OUTPUT_NAME)
-        best_checkpoint_tracker = BestCheckpointTracker(
-            output_dir=args.output_dir,
-            output_name=output_name,
-            save_metadata=True
-        )
-        logger.info(f"Best checkpoint tracking enabled. Final checkpoint will be saved as: {output_name}.safetensors")
-    
     for epoch in range(num_train_epochs):
         accelerator.print(f"\nepoch {epoch+1}/{num_train_epochs}")
         current_epoch.value = epoch + 1
@@ -835,12 +822,7 @@ def train(args):
         accelerator.wait_for_everyone()
 
         if args.save_every_n_epochs is not None:
-            saving = (epoch + 1) % args.save_every_n_epochs == 0 and (epoch + 1) < num_train_epochs
-            if accelerator.is_main_process and saving:
-                # Get epoch loss for tracking
-                epoch_loss = loss_recorder.moving_average
-                
-                # Save checkpoint
+            if accelerator.is_main_process:
                 src_path = src_stable_diffusion_ckpt if save_stable_diffusion_format else src_diffusers_model_path
                 sdxl_train_util.save_sd_model_on_epoch_end_or_stepwise(
                     args,
@@ -860,21 +842,6 @@ def train(args):
                     logit_scale,
                     ckpt_info,
                 )
-                
-                # Track best checkpoint
-                if best_checkpoint_tracker is not None:
-                    # Determine checkpoint path
-                    ext = ".safetensors" if use_safetensors else ".ckpt"
-                    ckpt_name = train_util.get_epoch_ckpt_name(args, ext, epoch + 1)
-                    checkpoint_path = os.path.join(args.output_dir, ckpt_name)
-                    
-                    # Update tracker
-                    is_best = best_checkpoint_tracker.update(
-                        epoch=epoch + 1,
-                        loss=epoch_loss,
-                        checkpoint_path=checkpoint_path,
-                        global_step=global_step
-                    )
 
         sdxl_train_util.sample_images(
             accelerator,
@@ -902,34 +869,22 @@ def train(args):
     del accelerator  # この後メモリを使うのでこれは消す
 
     if is_main_process:
-        # Save best checkpoint as final output
-        if best_checkpoint_tracker is not None and best_checkpoint_tracker.has_best_checkpoint():
-            logger.info("Saving best checkpoint as final model...")
-            best_checkpoint_tracker.save_best_as_final()
-            best_info = best_checkpoint_tracker.get_best_info()
-            logger.info(
-                f"Best checkpoint: epoch {best_info['best_epoch']} "
-                f"with loss {best_info['best_loss']:.6f}"
-            )
-        else:
-            # Fallback to regular save if no best checkpoint tracked
-            src_path = src_stable_diffusion_ckpt if save_stable_diffusion_format else src_diffusers_model_path
-            sdxl_train_util.save_sd_model_on_train_end(
-                args,
-                src_path,
-                save_stable_diffusion_format,
-                use_safetensors,
-                save_dtype,
-                epoch,
-                global_step,
-                text_encoder1,
-                text_encoder2,
-                unet,
-                vae,
-                logit_scale,
-                ckpt_info,
-            )
-        
+        src_path = src_stable_diffusion_ckpt if save_stable_diffusion_format else src_diffusers_model_path
+        sdxl_train_util.save_sd_model_on_train_end(
+            args,
+            src_path,
+            save_stable_diffusion_format,
+            use_safetensors,
+            save_dtype,
+            epoch,
+            global_step,
+            text_encoder1,
+            text_encoder2,
+            unet,
+            vae,
+            logit_scale,
+            ckpt_info,
+        )
         logger.info("model saved.")
 
 

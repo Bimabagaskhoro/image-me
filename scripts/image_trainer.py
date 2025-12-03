@@ -239,6 +239,7 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
     # Save config to file
     config_path = os.path.join(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, f"{task_id}.toml")
     save_config_toml(config, config_path)
+    print(f"config is {config}", flush=True)
     print(f"Created config at {config_path}", flush=True)
     return config_path
 

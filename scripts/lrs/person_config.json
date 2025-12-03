@@ -1,6 +1,12 @@
 {
     "default": {
-
+        "prior_loss_weight": 0.7,
+        "max_train_epochs": 30,
+        "loss_type": "huber",
+        "huber_c": 0.05,
+        "huber_schedule": "snr",
+        "optimizer_args": ["decouple=True", "d_coef=1", "weight_decay=0.001", "use_bias_correction=True", "safeguard_warmup=True"],
+        "seed": 42
     },
     "data": {
         "eb324bfcad14e8f1d46346f46ae7af7d3e58c3babbc1f699ee7c61baab291369": {

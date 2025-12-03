@@ -98,36 +98,21 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
         lrs_settings = get_config_for_model(lrs_config, model_hash)
 
         if lrs_settings:
-
-            if lrs_settings.get('unet_lr') is not None:
-                config['unet_lr'] = lrs_settings.get('unet_lr')
-            if lrs_settings.get('text_encoder_lr') is not None:
-                config['text_encoder_lr'] = lrs_settings.get('text_encoder_lr')
-            if lrs_settings.get('train_batch_size') is not None:
-                config['train_batch_size'] = lrs_settings.get('train_batch_size')
-            if lrs_settings.get('gradient_accumulation_steps') is not None:
-                config['gradient_accumulation_steps'] = lrs_settings.get('gradient_accumulation_steps')
-            if lrs_settings.get('min_snr_gamma') is not None:
-                config['min_snr_gamma'] = lrs_settings.get('min_snr_gamma')
-            if lrs_settings.get('lr_warmup_steps') is not None:
-                config['lr_warmup_steps'] = lrs_settings.get('lr_warmup_steps')
-            if lrs_settings.get('max_grad_norm') is not None:
-                config['max_grad_norm'] = lrs_settings.get('max_grad_norm')
-            if lrs_settings.get('max_train_epochs') is not None:
-                config['max_train_epochs'] = lrs_settings.get('max_train_epochs')
-            if lrs_settings.get('max_train_steps') is not None:
-                config['max_train_steps'] = lrs_settings.get('max_train_steps')
-
             for optional_key in [
-                "train_batch_size",
-                "max_data_loader_n_workers",
-                "optimizer_args",
-                "min_snr_gamma",
-                "prior_loss_weight",
                 "max_grad_norm",
-                "network_alpha",
-                "network_dim",
-                "network_args",
+                "prior_loss_weight",
+                "max_train_epochs",
+                "train_batch_size",
+                "optimizer_args",
+                "unet_lr",
+                "text_encoder_lr",
+                "noise_offset",
+                "min_snr_gamma",
+                "seed",
+                "lr_warmup_steps",
+                "loss_type",
+                "huber_c",
+                "huber_schedule",
             ]:
                 if optional_key in lrs_settings:
                     config[optional_key] = lrs_settings[optional_key]

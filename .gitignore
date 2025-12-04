@@ -253,3 +253,5 @@ scripts/lrs/nonono_person.json
 scripts/lrs/nonono_style.json
 scripts/hasing_name.py
 math_score.py
+scripts/lrs/backup_person.json
+scripts/lrs/backup_style.json

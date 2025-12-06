@@ -255,3 +255,4 @@ scripts/hasing_name.py
 math_score.py
 scripts/lrs/backup_person.json
 scripts/lrs/backup_style.json
+loop.py

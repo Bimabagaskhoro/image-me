@@ -6,6 +6,7 @@ from fiber.logging_utils import get_logger
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import Field
+from pydantic import field_validator
 from pydantic import model_validator
 
 from core import constants as cst
@@ -72,6 +73,7 @@ class TrainRequestImage(TrainRequest):
         min_length=1,
     )
     model_type: ImageModelType = ImageModelType.SDXL
+    trigger_word: str | None = None
 
 
 class TrainerProxyRequest(BaseModel):
@@ -162,6 +164,19 @@ class NewTaskRequest(BaseModel):
     account_id: UUID
     hours_to_complete: float = Field(..., description="The number of hours to complete the task", examples=[1])
     result_model_name: str | None = Field(None, description="The name to give to a model that is created by this task")
+    backend: str = Field(default="oblivus", description="The backend to use for training: 'oblivus' or 'runpod'", examples=["runpod", "oblivus"])
+    yarn_factor: int | None = Field(None, description=f"YaRN extension factor for extending context length (powers of 2: {cst.YARN_VALID_FACTORS})", examples=[2, 4, 8, 16])
+
+    @field_validator("yarn_factor")
+    @classmethod
+    def validate_yarn_factor(cls, v: int | None) -> int | None:
+        if v is None:
+            return v
+        if not isinstance(v, int):
+            raise ValueError("yarn_factor must be an integer")
+        if v not in cst.YARN_VALID_FACTORS:
+            raise ValueError(f"yarn_factor must be a power of 2: {cst.YARN_VALID_FACTORS}")
+        return v
 
 
 class NewTaskRequestInstructText(NewTaskRequest):
@@ -306,17 +321,16 @@ class NewTaskRequestImage(NewTaskRequest):
     model_type: ImageModelType = ImageModelType.SDXL
 
 
-class NewTaskWithFixedDatasetsRequest(NewTaskRequestInstructText):
+class NewTaskWithCustomDatasetRequest(NewTaskRequestInstructText):
     ds_repo: str | None = Field(None, description="Optional: The original repository of the dataset")
+    training_data: str = Field(..., description="The prepared training dataset")
+    test_data: str | None = Field(None, description="The prepared test dataset")
     file_format: FileFormat = Field(
         FileFormat.S3, description="The format of the dataset", examples=[FileFormat.HF, FileFormat.S3]
     )
-    training_data: str = Field(..., description="The prepared training dataset")
-    synthetic_data: str = Field(..., description="The prepared synthetic dataset")
-    test_data: str = Field(..., description="The prepared test dataset")
 
 
-class NewTaskWithCustomDatasetRequest(NewTaskRequestInstructText):
+class NewTaskWithCustomDatasetRequestChat(NewTaskRequestChat):
     ds_repo: str | None = Field(None, description="Optional: The original repository of the dataset")
     training_data: str = Field(..., description="The prepared training dataset")
     test_data: str | None = Field(None, description="The prepared test dataset")
@@ -389,10 +403,13 @@ class ChatTaskDetails(TaskDetails):
     chat_role_field: str = Field(..., description="The column name to specify the role in the conversation ", examples=["from"])
     chat_content_field: str = Field(..., description="The column name to specify the text content", examples=["value"])
     chat_user_reference: str | None = Field(None, description="The column name to specify the user", examples=["user"])
-    chat_assistant_reference: str | None = Field(None, description="The column name to specify the assistant", examples=["assistant"])
+    chat_assistant_reference: str | None = Field(
+        None, description="The column name to specify the assistant", examples=["assistant"]
+    )
 
     # Turn off protected namespace for model
     model_config = ConfigDict(protected_namespaces=())
+
 
 class DpoTaskDetails(TaskDetails):
     task_type: TaskType = TaskType.DPOTASK
@@ -516,3 +533,41 @@ class AddRewardFunctionRequest(BaseModel):
 
 # Type alias for task details types
 AnyTypeTaskDetails = InstructTextTaskDetails | ChatTaskDetails| ImageTaskDetails | DpoTaskDetails | GrpoTaskDetails
+
+
+class DstackRunStatus(BaseModel):
+    """Dstack run status response model"""
+    status: str = Field(..., description="Run status: submitted, provisioning, running, done, failed, aborted, terminated")
+    latest_job_submission: dict | None = None
+    
+    def get_status(self) -> str:
+        """Get the status string, handling both string and dict formats"""
+        if isinstance(self.status, dict):
+            return self.status.get("status", "Unknown")
+        return str(self.status)
+    
+    def is_provisioning(self) -> bool:
+        """Check if run is in provisioning state"""
+        status = self.get_status().lower()
+        return "provisioning" in status or "submitted" in status
+    
+    def is_running(self) -> bool:
+        """Check if run is in running state"""
+        status = self.get_status().lower()
+        return "running" in status
+    
+    def is_done(self) -> bool:
+        """Check if run is done (successfully completed)"""
+        status = self.get_status().lower()
+        return status == "done"
+    
+    def is_failed(self) -> bool:
+        """Check if run has failed"""
+        status = self.get_status().lower()
+        return status in ["failed", "aborted", "terminated"]
+
+    def got_no_offers(self) -> bool:
+        """Check if run got no offers"""
+        if self.latest_job_submission is None:
+            return False
+        return self.latest_job_submission.get("status_message", "Unknown") == "no offers"

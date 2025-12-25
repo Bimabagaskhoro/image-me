@@ -36,7 +36,11 @@
             "min_snr_gamma": 7
         },
         "756995ded1a0cd274a3cf4bdb5df47926993806cc19bed0a808a4a211545ab95": {
-            
+            "max_train_epochs": 22,
+            "optimizer_args": [ "betas=(0.9, 0.999)", "weight_decay=1e-03", "eps=1e-08"],
+            "unet_lr": 0.0000411,
+            "text_encoder_lr": 0.0000411,
+            "noise_offset": 0.0411
         },
         "162748f97994bc2ffaafdcfd900e06e245e85a9826fb77aa8568846fb6b3f15d": {
             "max_train_epochs": 22,
@@ -89,15 +93,11 @@
 
         },
         "a74734bd059b67f654909604bbe57cce7802cf41ce7cf269252366c62b2c8bf6": {
-            "max_grad_norm": 1.25,
-            "prior_loss_weight": 0.612,
-            "max_train_epochs": 25,
-            "optimizer_args": [ "betas=(0.9, 0.999)", "weight_decay=5e-04", "eps=1e-08"],
-            "unet_lr": 2.5e-5,
-            "text_encoder_lr": 2.5e-6,
-            "noise_offset": 0.1,
-            "min_snr_gamma": 6,
-            "seed": 2951032221
+            "max_train_epochs": 22,
+            "optimizer_args": [ "betas=(0.9, 0.999)", "weight_decay=1e-03", "eps=1e-08"],
+            "unet_lr": 0.0000411,
+            "text_encoder_lr": 0.0000411,
+            "noise_offset": 0.0411
         },
         "c6efeaf411754e65b3e2395640d5f90ac6150a1d82e4b3caf8df566aa406609c": {
             "max_train_epochs": 25,
@@ -120,6 +120,27 @@
             "noise_offset": 0.1,
             "min_snr_gamma": 6,
             "seed": 2951032221
+        },
+        "158598455e814319c65ccbf8bbae049200601b2ac4fb1429fed6158f2f5ac8bd": {
+            "max_train_epochs": 22,
+            "optimizer_args": [ "betas=(0.9, 0.999)", "weight_decay=1e-03", "eps=1e-08"],
+            "unet_lr": 0.0000411,
+            "text_encoder_lr": 0.0000411,
+            "noise_offset": 0.0411
+        },
+        "d6d232a2821b3708d356d95aa0b8cd553d54fde4a083d0d32f2718fafc5b134c": {
+            "max_train_epochs": 22,
+            "optimizer_args": [ "betas=(0.9, 0.999)", "weight_decay=1e-03", "eps=1e-08"],
+            "unet_lr": 0.0000411,
+            "text_encoder_lr": 0.0000411,
+            "noise_offset": 0.0411
+        },
+        "a1fd5a9d0707d1b96b7738c4c48894f95e8ddbaa840d5aa85a3a03671479894c": {
+            "max_train_epochs": 22,
+            "optimizer_args": [ "betas=(0.9, 0.999)", "weight_decay=1e-03", "eps=1e-08"],
+            "unet_lr": 0.0000411,
+            "text_encoder_lr": 0.0000411,
+            "noise_offset": 0.0411
         }
     }
 }

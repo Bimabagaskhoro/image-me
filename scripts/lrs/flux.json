@@ -24,6 +24,11 @@
             "unet_lr": 0.00008,
             "text_encoder_lr": [ 0.000008, 0.000008],
             "max_train_steps": 250
+        },
+        "00f8fa962a24d797b9a09be9886ec37bfaf613c98a420d303d220040f65b3eed": {
+            "unet_lr": 0.00005,
+            "text_encoder_lr": [ 0.000005, 0.000005],
+            "max_train_steps": 250
         }
     }
 }

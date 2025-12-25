@@ -1,12 +1,14 @@
-from pathlib import Path
 import os
+from pathlib import Path
+
 import trainer.constants as train_cst
 from trainer.utils.style_detection import detect_styles_in_prompts
+from core.models.utility_models import ChatTemplateDatasetType
 from core.models.utility_models import DpoDatasetType
 from core.models.utility_models import GrpoDatasetType
-from core.models.utility_models import InstructTextDatasetType
-from core.models.utility_models import ChatTemplateDatasetType
 from core.models.utility_models import ImageModelType
+from core.models.utility_models import InstructTextDatasetType
+
 
 def get_checkpoints_output_path(task_id: str, repo_name: str) -> str:
     return str(Path(train_cst.OUTPUT_CHECKPOINTS_PATH) / task_id / repo_name)
@@ -44,6 +46,10 @@ def get_image_training_config_template_path(model_type: str, train_data_dir: str
 
     elif model_type == ImageModelType.FLUX.value:
         return str(Path(train_cst.IMAGE_CONTAINER_CONFIG_TEMPLATE_PATH) / "base_diffusion_flux.toml"), False
+    elif model_type == ImageModelType.Z_IMAGE.value:
+        return str(Path(train_cst.IMAGE_CONTAINER_CONFIG_TEMPLATE_PATH) / "base_diffusion_zimage.yaml")
+    elif model_type == ImageModelType.QWEN_IMAGE.value:
+        return str(Path(train_cst.IMAGE_CONTAINER_CONFIG_TEMPLATE_PATH) / "base_diffusion_qwen_image.yaml")
 
 def get_image_training_zip_save_path(task_id: str) -> str:
     return str(Path(train_cst.CACHE_DATASETS_DIR) / f"{task_id}_tourn.zip")
@@ -58,7 +64,7 @@ def get_axolotl_dataset_paths(dataset_filename: str) -> tuple[str, str]:
 
 def get_axolotl_base_config_path(dataset_type) -> str:
     root_dir = Path(train_cst.AXOLOTL_DIRECTORIES["root"])
-    if isinstance(dataset_type, (InstructTextDatasetType, DpoDatasetType)):
+    if isinstance(dataset_type, (InstructTextDatasetType, DpoDatasetType, ChatTemplateDatasetType)):
         return str(root_dir / "base.yml")
     elif isinstance(dataset_type, GrpoDatasetType):
         return str(root_dir / "base_grpo.yml")

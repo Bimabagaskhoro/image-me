@@ -376,6 +376,7 @@ async def main():
         args.model,
         args.model_type,
         args.expected_repo_name,
+        args.trigger_word
     )
 
     # Run training

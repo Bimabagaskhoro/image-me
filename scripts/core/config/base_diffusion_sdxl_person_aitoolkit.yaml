@@ -1,0 +1,68 @@
+job: extension
+config:
+  name: last
+  process:
+  - type: sd_trainer
+    training_folder: /app/checkpoints
+    device: cuda:0
+    trigger_word: ""
+    
+    network:
+      type: lora
+      linear: 8
+      linear_alpha: 4
+    
+    save:
+      dtype: bf16
+      save_every_n_epochs: 5
+      max_step_saves_to_keep: 4
+      save_format: safetensors
+    
+    datasets:
+    - folder_path: /dataset/images
+      caption_ext: txt
+      caption_dropout_rate: 0.0
+      shuffle_tokens: false
+      cache_latents_to_disk: true
+      resolution: [512, 768, 1024]
+    
+    train:
+      batch_size: 4
+      max_train_epochs: 25
+      gradient_accumulation_steps: 1
+      train_unet: true
+      train_text_encoder: true
+      gradient_checkpointing: true
+      max_denoising_steps: 40
+      noise_offset: 0.0
+      noise_scheduler: euler_a
+      optimizer: prodigy
+      optimizer_args:
+        decouple: true
+        d_coef: 1.0
+        weight_decay: 0.01
+        use_bias_correction: true
+        safeguard_warmup: true
+      lr: 1.0
+      text_encoder_lr: 1.0
+      lr_scheduler: constant
+      loss_type: l2
+      min_snr_gamma: 5.0
+      max_grad_norm: 1.0
+      scale_weight_norms: 5.0
+      ema_config:
+        use_ema: true
+        ema_decay: 0.99
+      dtype: bf16
+      
+    model:
+      name_or_path: /cache/models/sdxl_base
+      is_v2: false
+      is_v_pred: false
+      is_xl: true
+      no_half_vae: true
+
+meta:
+  name: sdxl_person_lora
+  version: '1.0'
+

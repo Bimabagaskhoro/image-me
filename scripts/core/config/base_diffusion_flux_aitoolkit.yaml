@@ -2,47 +2,53 @@ job: extension
 config:
   name: last
   process:
-  - type: diffusion_trainer
+  - type: sd_trainer
     training_folder: /app/checkpoints
-    device: cuda
+    device: cuda:0
+    trigger_word: ""
+    
     network:
       type: lora
-      linear: 32
-      linear_alpha: 32
-      conv: 16
-      conv_alpha: 16
+      linear: 128
+      linear_alpha: 128
+    
     save:
       dtype: bf16
       save_every: 250
       max_step_saves_to_keep: 4
-      save_format: diffusers
+      save_format: safetensors
+    
     datasets:
     - folder_path: /dataset/images
       caption_ext: txt
+      caption_dropout_rate: 0.05
+      shuffle_tokens: false
       cache_latents_to_disk: true
       resolution: [512, 768, 1024]
-      is_reg: false
+    
     train:
-      batch_size: 4
+      batch_size: 1
       steps: 2000
-      lr: 0.0001
-      optimizer: adamw8bit
+      gradient_accumulation_steps: 1
+      train_unet: true
+      train_text_encoder: false
       gradient_checkpointing: true
       noise_scheduler: flowmatch
-      timestep_type: weighted
-      dtype: bf16
+      optimizer: adamw8bit
+      lr: 0.0004
+      
       ema_config:
         use_ema: true
         ema_decay: 0.99
+      
+      dtype: bf16
+      
     model:
-      name_or_path: /cache/models
-      arch: zimage:turbo
+      name_or_path: black-forest-labs/FLUX.1-dev
+      is_flux: true
       quantize: true
-      qtype: qfloat8
-      quantize_te: true
-      qtype_te: qfloat8
-      assistant_lora_path: /cache/hf_cache/zimage_turbo_training_adapter_v2.safetensors
+
 meta:
-  name: zimage_lora
+  name: flux_lora
   version: '1.0'
 

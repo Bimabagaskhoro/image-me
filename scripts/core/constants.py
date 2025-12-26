@@ -16,6 +16,8 @@ except (TypeError, ValueError):
 
 IS_PROD_ENV = NETUID == DEFAULT_NETUID
 
+MINER_DOCKER_IMAGE = "weightswandering/tuning_miner:latest"
+MINER_DOCKER_IMAGE_DIFFUSION = "diagonalge/miner-diffusion-flux:latest"
 VALIDATOR_DOCKER_IMAGE = "weightswandering/tuning_vali:latest"
 VALIDATOR_DOCKER_IMAGE_DIFFUSION = "diagonalge/tuning_validator_diffusion:latest"
 
@@ -26,7 +28,9 @@ OUTPUT_DIR = "core/outputs/"
 CACHE_DIR = "~/.cache/huggingface"
 CACHE_DIR_HUB = os.path.expanduser("~/.cache/huggingface/hub")
 GRPO_MINER_OUTPUT_DIR = "/root/.cache/huggingface/hub/trained_repo"
+MINER_CONTAINER_SCRIPTS_PATH = "/app/scripts"
 DIFFUSION_DATASET_DIR = "core/dataset/images"
+CONTAINER_FLUX_PATH = "/app/flux/unet"
 
 DIFFUSION_SDXL_REPEATS = 5
 DIFFUSION_FLUX_REPEATS = 1
@@ -49,7 +53,9 @@ HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 WANDB_TOKEN = os.getenv("WANDB_TOKEN")
 
 HUGGINGFACE_USERNAME = os.getenv("HUGGINGFACE_USERNAME")
-RAYONLABS_HF_USERNAME = "gradients-io-tournaments"  # "besimray"  # "rayonlabs"
+RAYONLABS_HF_USERNAME = "besimray"  # "rayonlabs"
+
+CUSTOM_DATASET_TYPE = "custom"
 
 # DPO default dataset type
 DPO_DEFAULT_DATASET_TYPE = "chatml.default"
@@ -60,9 +66,3 @@ DPO_DEFAULT_FIELD_CHOSEN = "chosen"
 DPO_DEFAULT_FIELD_REJECTED = "rejected"
 
 GRPO_DEFAULT_FIELD_PROMPT = "prompt"
-
-# YaRN extension HuggingFace credentials (separate from main HF credentials)
-YARN_HUGGINGFACE_USERNAME = os.getenv("YARN_HUGGINGFACE_USERNAME", "gradients-io")
-YARN_HUGGINGFACE_TOKEN = os.getenv("YARN_HUGGINGFACE_TOKEN")
-
-YARN_VALID_FACTORS = [2, 4, 8, 16, 32]

@@ -13,8 +13,12 @@ class BaseConfig:
 
 @dataclass
 class MinerConfig(BaseConfig):
+    wandb_token: str
+    huggingface_username: str
+    huggingface_token: str
     min_stake_threshold: str
     refresh_nodes: bool
+    is_validator: bool = False
 
 
 @dataclass

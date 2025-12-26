@@ -12,9 +12,9 @@ from core.models.utility_models import TaskStatus
 from trainer import constants as cst
 from trainer.tasks import save_task_history
 from trainer.tasks import task_history
-from validator.utils.logging import get_all_context_tags
-from validator.utils.logging import get_logger
-from validator.utils.logging import stream_container_logs
+from trainer.utils.logging_two import get_all_context_tags
+from trainer.utils.logging_two import get_logger
+from trainer.utils.logging_two import stream_container_logs
 
 
 logger = get_logger(__name__)

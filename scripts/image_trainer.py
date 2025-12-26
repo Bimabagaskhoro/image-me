@@ -675,6 +675,49 @@ def create_aitoolkit_config(task_id: str, model_path: str, model_name: str, mode
     return config_path
 
 
+def run_training_ai_toolkit(model_type: str, config_path: str, output_dir: str = None):
+    """Run training using ai-toolkit for all model types"""
+    print(f"Starting ai-toolkit training with config: {config_path}", flush=True)
+
+    training_command = [
+        "python3",
+        "/app/ai-toolkit/run.py",
+        config_path
+    ]
+
+    try:
+        print("Starting ai-toolkit training subprocess...\n", flush=True)
+        process = subprocess.Popen(
+            training_command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+
+        for line in process.stdout:
+            print(line, end="", flush=True)
+
+        return_code = process.wait()
+        if return_code != 0:
+            raise subprocess.CalledProcessError(return_code, training_command)
+
+        print("Training subprocess completed successfully.", flush=True)
+        
+        if output_dir and os.path.exists(output_dir) and model_type in ["sdxl", "flux"]:
+            try:
+                flatten_aitoolkit_output(output_dir, config_name="last")
+                print("Directory structure flattened successfully.", flush=True)
+            except Exception as e:
+                print(f"Warning: Could not flatten directory structure: {e}", flush=True)
+                print("Training completed, but files may be in nested directory.", flush=True)
+
+    except subprocess.CalledProcessError as e:
+        print("Training subprocess failed!", flush=True)
+        print(f"Exit Code: {e.returncode}", flush=True)
+        print(f"Command: {' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd}", flush=True)
+        raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
+    
 def flatten_aitoolkit_output(output_dir: str, config_name: str = "last"):
     """
     Flatten AI-toolkit output structure by moving files from nested subdirectory
@@ -772,7 +815,7 @@ async def main():
     
         output_dir = train_paths.get_checkpoints_output_path(args.task_id, args.expected_repo_name)
     
-        run_training(model_type=args.model_type,config_path=config_path,output_dir=output_dir)
+        run_training_ai_toolkit(model_type=args.model_type,config_path=config_path,output_dir=output_dir)
     else:
         # Create config file
         config_path = create_config(

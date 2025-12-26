@@ -263,7 +263,6 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             config["network_alpha"] = network_config["network_alpha"]
             config["network_args"] = network_config["network_args"]
 
-
         # Save config to file
         config_path = os.path.join(train_cst.IMAGE_CONTAINER_CONFIG_SAVE_PATH, f"{task_id}.toml")
         save_config_toml(config, config_path)
@@ -308,7 +307,6 @@ def run_training(model_type, config_path):
                 f"/app/sd-scripts/{model_type}_train_network.py",
                 "--config_file", config_path
             ]
-
     try:
         print("Starting training subprocess...\n", flush=True)
         process = subprocess.Popen(

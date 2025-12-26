@@ -21,8 +21,8 @@ RUN mkdir -p /dataset/configs \
     /workspace/scripts \
     /workspace/core
 
-COPY core /workspace/core
-COPY miner /workspace/miner
+COPY scripts/core /workspace/core
+# COPY miner /workspace/miner
 COPY trainer /workspace/trainer
 COPY scripts /workspace/scripts
 

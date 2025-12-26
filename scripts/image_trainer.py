@@ -83,7 +83,7 @@ def load_lrs_config(model_type: str, is_style: bool) -> dict:
         return None
 
 
-def create_config(task_id, model_path, model_name, model_type, expected_repo_name):
+def create_config(task_id, model_path, model_name, model_type, expected_repo_name, trigger_word=None):
     """Get the training data directory"""
     train_data_dir = train_paths.get_image_training_images_dir(task_id)
 

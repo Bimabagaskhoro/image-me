@@ -83,7 +83,7 @@ def load_lrs_config(model_type: str, is_style: bool) -> dict:
         return None
 
 
-def create_config(task_id, model_path, model_name, model_type, expected_repo_name, trigger_word: str | None = None):
+def create_config(task_id, model_path, model_name, model_type, expected_repo_name):
     """Get the training data directory"""
     train_data_dir = train_paths.get_image_training_images_dir(task_id)
 
@@ -92,10 +92,12 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
 
     with open(config_template_path, "r") as file:
         config = toml.load(file)
+
     lrs_config = load_lrs_config(model_type, is_style)
     if lrs_config:
         model_hash = hash_model(model_name)
         lrs_settings = get_config_for_model(lrs_config, model_hash)
+
         if lrs_settings:
             for optional_key in [
                 "max_grad_norm",
@@ -119,6 +121,7 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             print(f"Warning: No LRS configuration found for model '{model_name}'", flush=True)
     else:
         print("Warning: Could not load LRS configuration, using default values", flush=True)
+
     # Update config
     network_config_person = {
         "stabilityai/stable-diffusion-xl-base-1.0": 235,
@@ -153,6 +156,7 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
         "GHArt/Lah_Mysterious_SDXL_V4.0_xl_fp16": 235,
         "OnomaAIResearch/Illustrious-xl-early-release-v0": 228
     }
+
     network_config_style = {
         "stabilityai/stable-diffusion-xl-base-1.0": 235,
         "Lykon/dreamshaper-xl-1-0": 235,
@@ -186,6 +190,7 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
         "GHArt/Lah_Mysterious_SDXL_V4.0_xl_fp16": 235,
         "OnomaAIResearch/Illustrious-xl-early-release-v0": 235
     }
+
     config_mapping = {
         228: {
             "network_dim": 32,
@@ -213,17 +218,20 @@ def create_config(task_id, model_path, model_name, model_type, expected_repo_nam
             "network_args": ["conv_dim=4", "conv_alpha=4", "dropout=null"]
         },
     }
+
     config["pretrained_model_name_or_path"] = model_path
     config["train_data_dir"] = train_data_dir
     output_dir = train_paths.get_checkpoints_output_path(task_id, expected_repo_name)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
     config["output_dir"] = output_dir
+
     if model_type == "sdxl":
         if is_style:
             network_config = config_mapping[network_config_style[model_name]]
         else:
             network_config = config_mapping[network_config_person[model_name]]
+
         config["network_dim"] = network_config["network_dim"]
         config["network_alpha"] = network_config["network_alpha"]
         config["network_args"] = network_config["network_args"]
@@ -262,6 +270,7 @@ def run_training(model_type, config_path):
             f"/app/sd-scripts/{model_type}_train_network.py",
             "--config_file", config_path
         ]
+
     try:
         print("Starting training subprocess...\n", flush=True)
         process = subprocess.Popen(
@@ -291,6 +300,26 @@ def hash_model(model: str) -> str:
     model_bytes = model.encode('utf-8')
     hashed = hashlib.sha256(model_bytes).hexdigest()
     return hashed 
+
+
+def load_lrs_config(model_type: str, is_style: bool) -> dict:
+    """Load the appropriate LRS configuration based on model type and training type"""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_dir = os.path.join(script_dir, "lrs")
+
+    if model_type == "flux":
+        config_file = os.path.join(config_dir, "flux.json")
+    elif is_style:
+        config_file = os.path.join(config_dir, "style_config.json")
+    else:
+        config_file = os.path.join(config_dir, "person_config.json")
+    
+    try:
+        with open(config_file, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Warning: Could not load LRS config from {config_file}: {e}", flush=True)
+        return None
 
 
 def get_aitoolkit_config_template_path(model_type: str, train_data_dir: str) -> tuple[str, bool]:
@@ -675,49 +704,6 @@ def create_aitoolkit_config(task_id: str, model_path: str, model_name: str, mode
     return config_path
 
 
-def run_training_ai_toolkit(model_type: str, config_path: str, output_dir: str = None):
-    """Run training using ai-toolkit for all model types"""
-    print(f"Starting ai-toolkit training with config: {config_path}", flush=True)
-
-    training_command = [
-        "python3",
-        "/app/ai-toolkit/run.py",
-        config_path
-    ]
-
-    try:
-        print("Starting ai-toolkit training subprocess...\n", flush=True)
-        process = subprocess.Popen(
-            training_command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1
-        )
-
-        for line in process.stdout:
-            print(line, end="", flush=True)
-
-        return_code = process.wait()
-        if return_code != 0:
-            raise subprocess.CalledProcessError(return_code, training_command)
-
-        print("Training subprocess completed successfully.", flush=True)
-        
-        if output_dir and os.path.exists(output_dir) and model_type in ["sdxl", "flux"]:
-            try:
-                flatten_aitoolkit_output(output_dir, config_name="last")
-                print("Directory structure flattened successfully.", flush=True)
-            except Exception as e:
-                print(f"Warning: Could not flatten directory structure: {e}", flush=True)
-                print("Training completed, but files may be in nested directory.", flush=True)
-
-    except subprocess.CalledProcessError as e:
-        print("Training subprocess failed!", flush=True)
-        print(f"Exit Code: {e.returncode}", flush=True)
-        print(f"Command: {' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd}", flush=True)
-        raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
-    
 def flatten_aitoolkit_output(output_dir: str, config_name: str = "last"):
     """
     Flatten AI-toolkit output structure by moving files from nested subdirectory
@@ -770,6 +756,50 @@ def flatten_aitoolkit_output(output_dir: str, config_name: str = "last"):
         raise
 
 
+def run_training_ai_toolkit(model_type: str, config_path: str, output_dir: str = None):
+    """Run training using ai-toolkit for all model types"""
+    print(f"Starting ai-toolkit training with config: {config_path}", flush=True)
+
+    training_command = [
+        "python3",
+        "/app/ai-toolkit/run.py",
+        config_path
+    ]
+
+    try:
+        print("Starting ai-toolkit training subprocess...\n", flush=True)
+        process = subprocess.Popen(
+            training_command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+
+        for line in process.stdout:
+            print(line, end="", flush=True)
+
+        return_code = process.wait()
+        if return_code != 0:
+            raise subprocess.CalledProcessError(return_code, training_command)
+
+        print("Training subprocess completed successfully.", flush=True)
+        
+        if output_dir and os.path.exists(output_dir) and model_type in ["sdxl", "flux"]:
+            try:
+                flatten_aitoolkit_output(output_dir, config_name="last")
+                print("Directory structure flattened successfully.", flush=True)
+            except Exception as e:
+                print(f"Warning: Could not flatten directory structure: {e}", flush=True)
+                print("Training completed, but files may be in nested directory.", flush=True)
+
+    except subprocess.CalledProcessError as e:
+        print("Training subprocess failed!", flush=True)
+        print(f"Exit Code: {e.returncode}", flush=True)
+        print(f"Command: {' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd}", flush=True)
+        raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
+
+
 async def main():
     print("---STARTING IMAGE TRAINING SCRIPT---", flush=True)
     # Parse command line arguments
@@ -804,6 +834,7 @@ async def main():
     )
 
     if args.model_type in (ImageModelType.Z_IMAGE.value, ImageModelType.QWEN_IMAGE.value,): 
+        print("z qwen or z image", flush=True)
         config_path = create_aitoolkit_config(
             args.task_id,
             model_path,
@@ -818,6 +849,7 @@ async def main():
         run_training_ai_toolkit(model_type=args.model_type,config_path=config_path,output_dir=output_dir)
     else:
         # Create config file
+        print("sdxl or flux", flush=True)
         config_path = create_config(
             args.task_id,
             model_path,
